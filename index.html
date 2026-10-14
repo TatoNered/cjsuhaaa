@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Iron Folk — керамические пивные кружки | HLGN Ceramics</title>
-<meta name="description" content="Гжель и хохлома надели косуху. Керамические пивные кружки для тех, кто живёт на двух колёсах: три характера, литьё в форме, ручная роспись. Предзаказ к Новому году.">
+<meta name="description" content="Гжель и хохлома надели косухи. Керамические пивные кружки для владельцев Harley-Davidson: три характера, ручная роспись, рельефное лобовое Harley-Davidson. Предзаказ к Новому году.">
 <meta property="og:title" content="Iron Folk — гжель и хохлома надели косуху">
-<meta property="og:description" content="Керамические пивные кружки для байкеров. Предзаказ к Новому году.">
+<meta property="og:description" content="Керамические пивные кружки для владельцев Harley-Davidson. Предзаказ к Новому году.">
 <meta property="og:image" content="img/khokhloma.jpg">
 <meta name="theme-color" content="#0c0a08">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -366,6 +366,33 @@ body.loaded .fade-up{opacity:1;transform:none}
 .who span{display:block;color:var(--ink-dim);margin-top:8px;font-size:15px}
 @media (max-width:900px){.gift__wrap{grid-template-columns:1fr}}
 
+/* ---------- custom: тиражи под заказ ---------- */
+.custom{padding:clamp(100px,16vh,180px) var(--gutter);background:var(--bg-2);--accent:var(--gold)}
+.custom__head{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;gap:32px;align-items:end;flex-wrap:wrap}
+.custom__head p{max-width:440px;color:var(--ink-dim);margin:0}
+.custom__grid{max-width:1280px;margin:54px auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+.ccard{
+  background:var(--bg-2);padding:30px 26px 26px;display:flex;flex-direction:column;gap:12px;
+  transition:background .5s;
+}
+.ccard:hover{background:var(--bg)}
+.ccard__n{font:500 10px/1 var(--f-mono);letter-spacing:.28em;color:var(--gold)}
+.ccard h3{margin:0;font:italic 600 clamp(26px,2.6vw,34px)/1 var(--f-serif)}
+.ccard p{margin:0;color:var(--ink-dim);font-size:15px;flex:1}
+.ccard button{
+  align-self:flex-start;margin-top:6px;
+  font:500 11px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);
+  border-bottom:1px solid var(--line);padding-bottom:6px;transition:color .3s,border-color .3s;
+}
+.ccard button:hover{color:var(--gold);border-color:var(--gold)}
+.custom__note{
+  max-width:1280px;margin:34px auto 0;display:flex;gap:28px;flex-wrap:wrap;
+  font:500 11px/1.6 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+.custom__note b{color:var(--ink);font-weight:500}
+@media (max-width:1000px){.custom__grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.custom{padding-block:70px}.custom__grid{grid-template-columns:1fr;margin-top:36px}.ccard{padding:24px 20px}.custom__note{gap:14px}}
+
 /* ---------- order ---------- */
 .order{padding:clamp(100px,16vh,180px) var(--gutter);background:var(--bg);position:relative}
 .order__wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(32px,6vw,100px);align-items:start}
@@ -714,6 +741,7 @@ section[id]{scroll-margin-top:72px}
   <a class="logo" href="#top"><b>IRON FOLK</b><span>HLGN ceramics</span></a>
   <nav class="nav__links" aria-label="Разделы">
     <a href="#collection">Коллекция</a>
+    <a href="#custom">Под заказ</a>
     <a href="#gift">В подарок</a>
   </nav>
   <a class="btn btn--sm magnetic" href="#order" data-cursor>Предзаказ</a>
@@ -725,7 +753,7 @@ section[id]{scroll-margin-top:72px}
 <section class="hero" id="hero">
   <div class="panels" id="panels">
     <div class="panel is-active" data-i="0" data-accent="var(--cobalt)" data-name="Гжель «Синий дым»" role="button" tabindex="0" aria-label="Гжель — Синий дым">
-      <img src="img/gzhel.jpg" alt="Керамическая пивная кружка в стиле гжель: кобальтовая роспись, рельефный щит с черепом">
+      <img src="img/gzhel.jpg" alt="Керамическая пивная кружка в стиле гжель: кобальтовая роспись, рельефное лобовое Harley-Davidson">
       <span class="panel__label"><i>01</i> Гжель</span>
     </div>
     <div class="panel" data-i="1" data-accent="var(--cinnabar)" data-name="Хохлома «Жар»" role="button" tabindex="0" aria-label="Хохлома — Жар">
@@ -733,22 +761,22 @@ section[id]{scroll-margin-top:72px}
       <span class="panel__label"><i>02</i> Хохлома</span>
     </div>
     <div class="panel" data-i="2" data-accent="var(--bronze)" data-name="«Чугун»" role="button" tabindex="0" aria-label="Чугун">
-      <img src="img/iron.jpg" alt="Брутальная керамическая пивная кружка с патиной под старый металл и рельефным щитом">
+      <img src="img/iron.jpg" alt="Керамическая пивная кружка из состаренной латуни с рельефным лобовым Harley-Davidson">
       <span class="panel__label"><i>03</i> Чугун</span>
     </div>
   </div>
 
   <div class="hero__content">
     <div>
-      <div class="eyebrow fade-up">Керамические пивные кружки · предзаказ к Новому году</div>
+      <div class="eyebrow fade-up">Керамические пивные кружки для владельцев Harley-Davidson · предзаказ к Новому году</div>
       <h1>
         <span class="line"><span>Гжель</span></span>
         <span class="line"><span>и хохлома</span></span>
-        <span class="line"><span>надели <em>косуху</em></span></span>
+        <span class="line"><span>надели <em>косухи</em></span></span>
       </h1>
     </div>
     <div class="hero__side fade-up">
-      <p>Русский промысел для тех, кто живёт на двух колёсах. Три характера. Одна кружка пива — и все в гараже спрашивают, где взял.</p>
+      <p>Русский промысел для владельцев Harley-Davidson. Три характера. Одна кружка пива — и все в гараже спрашивают, где взял.</p>
       <div class="hero__caption" id="heroCaption"><b>01</b> — Гжель «Синий дым»</div>
       <div class="hero__progress" id="heroProgress"><span class="is-active"></span><span></span><span></span></div>
       <a class="btn magnetic" href="#collection" data-cursor>Смотреть коллекцию
@@ -772,7 +800,7 @@ section[id]{scroll-margin-top:72px}
 <section class="manifesto" id="manifesto">
   <div class="manifesto__wrap">
     <div class="eyebrow reveal">Манифест</div>
-    <p id="manifestoText">Гжель расписывает посуду [blue]кобальтом уже третий век. Хохлома прячет узор под [red]киноварью и [red]золотом с семнадцатого. А в 1903‑м в деревянном сарае в [bronze]Милуоки собрали первый мотоцикл. Мы решили: им давно пора [ser]выпить [ser]вместе.</p>
+    <p id="manifestoText">Гжель расписывает посуду [blue]кобальтом уже третий век. Хохлома прячет узор под [red]киноварью и [red]золотом с семнадцатого. А в 1903‑м в деревянном сарае в [bronze]Милуоки Уилл Харли и Артур Дэвидсон собрали первый мотоцикл. Мы решили: им давно пора [ser]выпить [ser]вместе.</p>
   </div>
 </section>
 
@@ -780,10 +808,10 @@ section[id]{scroll-margin-top:72px}
 <section class="collection" id="collection">
   <div class="collection__head">
     <div>
-      <div class="eyebrow reveal">Коллекция · 7 характеров</div>
+      <div class="eyebrow reveal">Коллекция · 3 характера</div>
       <h2 class="h2 reveal d1">Выбери <em>свой</em><br>характер</h2>
     </div>
-    <p class="reveal d2">Одни — для тех, кто любит, когда у гостей отвисает челюсть. Другие — для тех, кому не нужно ничего объяснять. И отдельная клубная серия.</p>
+    <p class="reveal d2">Две кружки — для тех, кто любит, когда у гостей отвисает челюсть. Третья — для тех, кому не нужно ничего объяснять.</p>
   </div>
 
   <div class="chapters">
@@ -793,13 +821,9 @@ section[id]{scroll-margin-top:72px}
         <img class="is-active" src="img/gzhel.jpg" alt="">
         <img src="img/khokhloma.jpg" alt="">
         <img src="img/iron.jpg" alt="">
-        <img src="img/club-khokhloma.jpg" alt="">
-        <img src="img/club-gzhel.jpg" alt="">
-        <img src="img/wolf.jpg" alt="">
-        <img src="img/bronze-flame.jpg" alt="">
-        <div class="ch-frame__tag" id="chTag">01 / 07</div>
+        <div class="ch-frame__tag" id="chTag">01 / 03</div>
       </div>
-      <div class="ch-counter" id="chCounter"><span class="is-active">01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span><span>07</span></div>
+      <div class="ch-counter" id="chCounter"><span class="is-active">01</span><span>02</span><span>03</span></div>
     </div>
 
     <div class="ch-list">
@@ -809,12 +833,11 @@ section[id]{scroll-margin-top:72px}
         <div class="chapter__craft">Промысел: гжель</div>
         <h3>Синий дым</h3>
         <p class="chapter__lead">Бабушка оценит узор. Байкер — всё остальное.</p>
-        <p class="chapter__text">Кобальт по белой глазури — классика, которую знает каждый. Только вместо пасторальных цветов — розы с черепами, а на боку рельефный щит. Выглядит как музейный экспонат, пока на него не посмотришь внимательно.</p>
+        <p class="chapter__text">Кобальт по белой глазури — классика, которую знает каждый. Только вместо пасторальных цветов — розы с черепами, а на боку рельефное лобовое Harley-Davidson. Выглядит как музейный экспонат, пока на него не посмотришь внимательно.</p>
         <ul class="specs">
           <li><span>Палитра</span><span>Кобальт / белая глазурь</span></li>
-          <li><span>Рельеф</span><span>Щит с черепом</span></li>
+          <li><span>Рельеф</span><span>Лобовое Harley-Davidson</span></li>
           <li><span>Мотив</span><span>Розы-черепа, завитки гжели</span></li>
-          <li><span>Исполнение</span><span>Литьё в форме</span></li>
         </ul>
         <button class="btn magnetic" data-pick="gzhel" data-cursor>Хочу «Синий дым»
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
@@ -826,101 +849,35 @@ section[id]{scroll-margin-top:72px}
         <div class="chapter__craft">Промысел: хохлома</div>
         <h3>Жар</h3>
         <p class="chapter__lead">Хохлома всегда была про огонь. Мы просто добавили выхлоп.</p>
-        <p class="chapter__text">Чёрный лак, киноварь и золото. Огненные травы бегут по корпусу, рябина прорастает вокруг черепа, а щит горит красным, как стоп-сигнал в ночи. Ставишь на стол — и разговор сам начинается.</p>
+        <p class="chapter__text">Чёрный лак, киноварь и золото. Огненные травы бегут по корпусу, рябина прорастает вокруг лобового Harley-Davidson, и оно горит красным, как стоп-сигнал в ночи. Ставишь на стол — и разговор сам начинается.</p>
         <ul class="specs">
           <li><span>Палитра</span><span>Чёрный лак / киноварь / золото</span></li>
-          <li><span>Рельеф</span><span>Щит с черепом в рябине</span></li>
+          <li><span>Рельеф</span><span>Лобовое Harley-Davidson в рябине</span></li>
           <li><span>Мотив</span><span>Огненная травка, ягоды, черепа</span></li>
-          <li><span>Исполнение</span><span>Литьё в форме</span></li>
         </ul>
         <button class="btn magnetic" data-pick="khokhloma" data-cursor>Хочу «Жар»
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
       </article>
 
       <article class="chapter" data-i="2" data-bg="#141210" data-ghost="Чугун" style="--c:var(--bronze)">
-        <div class="chapter__img"><img src="img/iron.jpg" alt="Брутальная кружка «Чугун»" loading="lazy"></div>
+        <div class="chapter__img"><img src="img/iron.jpg" alt="Кружка «Чугун» из состаренной латуни" loading="lazy"></div>
         <div class="chapter__num">03</div>
         <div class="chapter__craft">Промысел: гараж</div>
         <h3>Чугун</h3>
-        <p class="chapter__lead">Без цветочков. Только щит.</p>
-        <p class="chapter__text">Матовая патина под старый металл, потёртости, бронзовые прожилки. Кружка выглядит так, будто полвека провисела на крюке в мастерской. Для тех, у кого на жилетке больше нашивок, чем пуговиц.</p>
+        <p class="chapter__lead">Без цветочков. Только лобовое.</p>
+        <p class="chapter__text">Матовая патина состаренной латуни, потёртости, тёмные прожилки. Кружка выглядит так, будто полвека провисела на крюке в мастерской. Для тех, у кого на жилетке больше нашивок, чем пуговиц.</p>
         <ul class="specs">
-          <li><span>Фактура</span><span>Патина под старое железо</span></li>
-          <li><span>Рельеф</span><span>Щит с черепом</span></li>
+          <li><span>Фактура</span><span>Состаренная латунь</span></li>
+          <li><span>Рельеф</span><span>Лобовое Harley-Davidson</span></li>
           <li><span>Декор</span><span>Никакого. И это принципиально</span></li>
-          <li><span>Исполнение</span><span>Литьё в форме</span></li>
         </ul>
         <button class="btn magnetic" data-pick="iron" data-cursor>Хочу «Чугун»
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
       </article>
 
-      <article class="chapter" data-i="3" data-bg="#1b0906" data-ghost="Орёл" style="--c:var(--gold)">
-        <div class="chapter__img"><img src="img/club-khokhloma.jpg" alt="Кружка «Орёл»" loading="lazy"></div>
-        <div class="chapter__num">04</div>
-        <div class="chapter__craft">Клубная серия: хохлома</div>
-        <h3>Орёл</h3>
-        <p class="chapter__lead">Клубный знак, написанный золотом по лаку.</p>
-        <p class="chapter__text">Двуглавый орёл держит мотор вместо скипетра и державы, по кругу бежит хохломская травка, снизу ленты с названием клуба. Самая парадная кружка серии — такую ставят на полку рядом с наградами, а не в посудный шкаф.</p>
-        <ul class="specs">
-          <li><span>Палитра</span><span>Чёрный лак / киноварь / золото</span></li>
-          <li><span>Рельеф</span><span>Орёл с мотором, ленты</span></li>
-          <li><span>Мотив</span><span>Хохломские травы, клубный знак</span></li>
-          <li><span>Исполнение</span><span>Литьё в форме</span></li>
-        </ul>
-        <button class="btn magnetic" data-pick="club-khokhloma" data-cursor>Хочу «Орёл»
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
-      </article>
 
-      <article class="chapter" data-i="4" data-bg="#0a1333" data-ghost="Орёл" style="--c:var(--cobalt)">
-        <div class="chapter__img"><img src="img/club-gzhel.jpg" alt="Кружка «Синий орёл»" loading="lazy"></div>
-        <div class="chapter__num">05</div>
-        <div class="chapter__craft">Клубная серия: гжель</div>
-        <h3>Синий орёл</h3>
-        <p class="chapter__lead">Тот же знак, только разговор ведётся кобальтом.</p>
-        <p class="chapter__text">Клубный герб по белой глазури, вокруг — гжельские розаны и мелкие черепа в завитках. Светлая кружка в серии, где всё остальное тёмное: на столе читается сразу.</p>
-        <ul class="specs">
-          <li><span>Палитра</span><span>Кобальт по белой глазури</span></li>
-          <li><span>Рельеф</span><span>Орёл с мотором, ленты</span></li>
-          <li><span>Мотив</span><span>Розаны, завитки, черепа</span></li>
-          <li><span>Исполнение</span><span>Литьё в форме</span></li>
-        </ul>
-        <button class="btn magnetic" data-pick="club-gzhel" data-cursor>Хочу «Синий орёл»
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
-      </article>
 
-      <article class="chapter" data-i="5" data-bg="#141210" data-ghost="Волк" style="--c:var(--cinnabar)">
-        <div class="chapter__img"><img src="img/wolf.jpg" alt="Кружка «Волк»" loading="lazy"></div>
-        <div class="chapter__num">06</div>
-        <div class="chapter__craft">Промысел: мастерская</div>
-        <h3>Волк</h3>
-        <p class="chapter__lead">Единственная кружка в серии, которая смотрит на тебя в ответ.</p>
-        <p class="chapter__text">Матовый чёрный корпус, на боку — волк, выходящий из пламени, в белом круге. Цвета взяты из старой школы татуировки: жёлтый, малиновый, серый. Ни одного завитка — только морда и огонь.</p>
-        <ul class="specs">
-          <li><span>Фактура</span><span>Матовый чёрный, без глянца</span></li>
-          <li><span>Рельеф</span><span>Волк в пламени, круг</span></li>
-          <li><span>Мотив</span><span>Старая школа, без орнамента</span></li>
-          <li><span>Исполнение</span><span>Литьё в форме</span></li>
-        </ul>
-        <button class="btn magnetic" data-pick="wolf" data-cursor>Хочу «Волк»
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
-      </article>
 
-      <article class="chapter" data-i="6" data-bg="#141210" data-ghost="Бронза" style="--c:var(--bronze)">
-        <div class="chapter__img"><img src="img/bronze-flame.jpg" alt="Кружка «Бронза»" loading="lazy"></div>
-        <div class="chapter__num">07</div>
-        <div class="chapter__craft">Промысел: гараж</div>
-        <h3>Бронза</h3>
-        <p class="chapter__lead">Как будто отлита не в мастерской, а в литейном цеху.</p>
-        <p class="chapter__text">Тёмная бронзовая патина с зеленцой в углублениях, по низу — заклёпки, на боку полированный пламенный знак. Монохром целиком: ни росписи, ни цвета, только металл и свет на рёбрах.</p>
-        <ul class="specs">
-          <li><span>Фактура</span><span>Бронзовая патина, заклёпки</span></li>
-          <li><span>Рельеф</span><span>Пламенный знак</span></li>
-          <li><span>Декор</span><span>Нет. Только металл</span></li>
-          <li><span>Исполнение</span><span>Литьё в форме</span></li>
-        </ul>
-        <button class="btn magnetic" data-pick="bronze-flame" data-cursor>Хочу «Бронза»
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
-      </article>
     </div>
   </div>
 </section>
@@ -948,6 +905,53 @@ section[id]{scroll-margin-top:72px}
   </div>
 </section>
 
+<!-- CUSTOM -->
+<section class="custom" id="custom">
+  <div class="custom__head">
+    <div>
+      <div class="eyebrow reveal">Под заказ</div>
+      <h2 class="h2 reveal d1">Своя кружка<br><em>со своим знаком</em></h2>
+    </div>
+    <p class="reveal d2">Тот же корпус и та же роспись, но рельеф и символика — ваши. Делаем тиражи под клубы, заведения и события.</p>
+  </div>
+
+  <div class="custom__grid">
+    <article class="ccard reveal">
+      <div class="ccard__n">01</div>
+      <h3>Мотоклубу</h3>
+      <p>Нашивка клуба в рельефе, цвета чаптера, номер в партии на дне. Такие кружки дарят на вступление и ставят за барной стойкой в клубхаусе.</p>
+      <button type="button" data-custom="мотоклуб">Обсудить тираж</button>
+    </article>
+
+    <article class="ccard reveal d1">
+      <div class="ccard__n">02</div>
+      <h3>Бару и пабу</h3>
+      <p>Логотип заведения вместо лобового, объём под вашу подачу. Гости допивают — и спрашивают, где купить такую же. Продаются прямо у стойки.</p>
+      <button type="button" data-custom="бар или паб">Обсудить тираж</button>
+    </article>
+
+    <article class="ccard reveal d2">
+      <div class="ccard__n">03</div>
+      <h3>Фестивалю</h3>
+      <p>Год и название события в рельефе — кружка становится памятным знаком, а не одноразовым стаканом. Берут на мотослёты и тематические сходки.</p>
+      <button type="button" data-custom="фестиваль">Обсудить тираж</button>
+    </article>
+
+    <article class="ccard reveal d2">
+      <div class="ccard__n">04</div>
+      <h3>Группе</h3>
+      <p>Обложка альбома или логотип группы на боку. Мерч, который не растянется после стирки и переживёт сам коллектив.</p>
+      <button type="button" data-custom="музыкальная группа">Обсудить тираж</button>
+    </article>
+  </div>
+
+  <div class="custom__note">
+    <span><b>Свой рельеф</b> — лепим форму под ваш знак</span>
+    <span><b>Своя палитра</b> — гжель, хохлома или монохром</span>
+    <span><b>Тираж и сроки</b> — считаем по заявке</span>
+  </div>
+</section>
+
 <!-- ORDER -->
 <section class="order" id="order">
   <div class="order__wrap">
@@ -956,10 +960,6 @@ section[id]{scroll-margin-top:72px}
         <img class="is-active" data-k="gzhel" src="img/gzhel.jpg" alt="Выбранная кружка">
         <img data-k="khokhloma" src="img/khokhloma.jpg" alt="">
         <img data-k="iron" src="img/iron.jpg" alt="">
-        <img data-k="club-khokhloma" src="img/club-khokhloma.jpg" alt="">
-        <img data-k="club-gzhel" src="img/club-gzhel.jpg" alt="">
-        <img data-k="wolf" src="img/wolf.jpg" alt="">
-        <img data-k="bronze-flame" src="img/bronze-flame.jpg" alt="">
         <div class="tilt__glare"></div>
       </div>
       <div class="order__stage-cap"><span id="stageName">Гжель «Синий дым»</span><span id="stageMake">литьё в форме</span></div>
@@ -1017,7 +1017,7 @@ section[id]{scroll-margin-top:72px}
   <div class="footer__big" aria-hidden="true">Iron Folk</div>
   <div class="footer__row">
     <span>HLGN ceramics · hlgn.ru/ceramics</span>
-    <span class="footer__legal">Harley‑Davidson — зарегистрированный товарный знак Harley‑Davidson Motor Company. HLGN Ceramics не является официальным партнёром или лицензиатом правообладателя. <!-- TODO: согласовать формулировку с клиентом/юристом --></span>
+    <span class="footer__legal">Harley‑Davidson — зарегистрированный товарный знак Harley‑Davidson Motor Company. HLGN Ceramics не является официальным партнёром или лицензиатом правообладателя и действует в рамках государственной политики импортозамещения.</span>
   </div>
 </footer>
 
@@ -1032,20 +1032,11 @@ section[id]{scroll-margin-top:72px}
     gzhel:            { name:'Синий дым',  craft:'Гжель',        full:'Гжель «Синий дым»',      color:'var(--cobalt)',   img:'img/gzhel.jpg' },
     khokhloma:        { name:'Жар',        craft:'Хохлома',      full:'Хохлома «Жар»',          color:'var(--cinnabar)', img:'img/khokhloma.jpg' },
     iron:             { name:'Чугун',      craft:'Брутал',       full:'«Чугун»',                color:'var(--bronze)',   img:'img/iron.jpg' },
-    'club-khokhloma': { name:'Орёл',       craft:'Клуб · золото',full:'Клубная «Орёл»',         color:'var(--gold)',     img:'img/club-khokhloma.jpg' },
-    'club-gzhel':     { name:'Синий орёл', craft:'Клуб · гжель', full:'Клубная «Синий орёл»',   color:'var(--cobalt)',   img:'img/club-gzhel.jpg' },
-    wolf:             { name:'Волк',       craft:'Мастерская',   full:'«Волк»',                 color:'var(--cinnabar)', img:'img/wolf.jpg' },
-    'bronze-flame':   { name:'Бронза',     craft:'Гараж',        full:'«Бронза»',               color:'var(--bronze)',   img:'img/bronze-flame.jpg' },
   };
   const PRICES = { // ₽ — ЗАГЛУШКИ. Только литьё в форме.
     gzhel:     4900,
     khokhloma: 4900,
     iron:      3900,
-    // null — цену считаем при подтверждении заказа
-    'club-khokhloma': null,
-    'club-gzhel':     null,
-    wolf:             null,
-    'bronze-flame':   null,
   };
 
   const $  = (s, r=document) => r.querySelector(s);
@@ -1213,6 +1204,13 @@ section[id]{scroll-margin-top:72px}
   $('#optMug').addEventListener('click', e => { const b = e.target.closest('[data-mug]'); if (b) { state.mug = b.dataset.mug; render(); } });
   $('#qMinus').onclick = () => { state.qty = Math.max(1, state.qty - 1); render(); };
   $('#qPlus').onclick  = () => { state.qty = Math.min(20, state.qty + 1); render(); };
+  $$('[data-custom]').forEach(b => b.addEventListener('click', () => {
+    const note = $('#fNote');
+    note.value = `Кастомная партия: ${b.dataset.custom}. Расскажите про тираж, знак и сроки.`;
+    orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    setTimeout(() => note.focus({ preventScroll: true }), reduced ? 0 : 700);
+  }));
+
   $$('[data-pick]').forEach(b => b.addEventListener('click', () => {
     state.mug = b.dataset.pick; render();
     orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
