@@ -1,0 +1,1361 @@
+<!-- Iron Folk — блок для Тильды (T123 «HTML-код»). Вставлять целиком. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Dela+Gothic+One&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+html{scroll-padding-top:86px}
+#ironfolk{position:relative;--tmenu:0px}
+
+#ironfolk{
+  --bg:#0c0a08;
+  --bg-2:#15110d;
+  --ink:#efe6d4;
+  --ink-dim:#b3a791;
+  --muted:#7d7263;
+  --line:rgba(239,230,212,.14);
+
+  --cobalt:#4b72ff;
+  --cobalt-deep:#0a1333;
+  --cinnabar:#ff4b1f;
+  --gold:#e0a83f;
+  --lacquer:#1b0906;
+  --bronze:#b98c57;
+  --iron:#141210;
+
+  --accent:var(--cinnabar);
+
+  --f-display:"Dela Gothic One", "Impact", sans-serif;
+  --f-serif:"Cormorant Garamond", "Times New Roman", serif;
+  --f-body:"Golos Text", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, monospace;
+
+  --gutter:clamp(16px, 4vw, 56px);
+  --ease:cubic-bezier(.7,0,.2,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+#ironfolk *, #ironfolk *::before, #ironfolk *::after{box-sizing:border-box}
+#ironfolk{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+#ironfolk{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:400 17px/1.55 var(--f-body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+#ironfolk.is-loading{overflow:hidden}
+#ironfolk img{display:block;max-width:100%}
+#ironfolk a{color:inherit}
+#ironfolk button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+#ironfolk ::selection{background:var(--accent);color:var(--bg)}
+
+
+#ironfolk .grain{
+  position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.09;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation:grain 1.2s steps(6) infinite;
+}
+@keyframes grain{
+  0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-4%)}
+  60%{transform:translate(-4%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}
+}
+
+
+#ironfolk .loader{
+  position:fixed;inset:0;z-index:100;background:var(--bg);
+  display:grid;place-items:center;
+  transition:clip-path 1s var(--ease);
+  clip-path:inset(0 0 0 0);
+}
+#ironfolk.loaded .loader{clip-path:inset(0 0 100% 0)}
+#ironfolk .tach{position:relative;width:min(300px,70vw);aspect-ratio:1}
+#ironfolk .tach svg{width:100%;height:100%;overflow:visible}
+#ironfolk .tach__track{fill:none;stroke:var(--line);stroke-width:6}
+#ironfolk .tach__red{fill:none;stroke:var(--cinnabar);stroke-width:6;opacity:.35}
+#ironfolk .tach__fill{fill:none;stroke:var(--ink);stroke-width:6;stroke-linecap:butt}
+#ironfolk .tach__ticks line{stroke:var(--muted);stroke-width:2}
+#ironfolk .tach__read{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--f-mono);letter-spacing:.2em;
+}
+#ironfolk .tach__num{font:400 clamp(34px,9vw,46px)/1 var(--f-display);letter-spacing:0;font-variant-numeric:tabular-nums}
+#ironfolk .tach__unit{font-size:11px;color:var(--muted);margin-top:8px}
+#ironfolk .tach.redline .tach__num{color:var(--cinnabar)}
+#ironfolk .loader__hint{
+  position:absolute;bottom:32px;left:0;right:0;text-align:center;
+  font:500 11px/1 var(--f-mono);letter-spacing:.3em;color:var(--muted);text-transform:uppercase
+}
+
+
+#ironfolk .cursor, #ironfolk .cursor-dot{position:fixed;top:0;left:0;z-index:95;pointer-events:none;border-radius:50%;display:none;opacity:0;transition:opacity .3s}
+#ironfolk.has-cursor .cursor, #ironfolk.has-cursor .cursor-dot{opacity:1}
+@media (pointer:fine){ #ironfolk .cursor, #ironfolk .cursor-dot{display:block} }
+#ironfolk .cursor{
+  width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid rgba(239,230,212,.55);
+  transition:width .35s var(--ease-out),height .35s var(--ease-out),margin .35s var(--ease-out),background .35s,border-color .35s;
+  mix-blend-mode:difference;
+}
+#ironfolk .cursor.is-hover{width:74px;height:74px;margin:-37px 0 0 -37px;background:rgba(239,230,212,.9);border-color:transparent}
+#ironfolk .cursor-dot{width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:var(--ink)}
+
+
+#ironfolk .nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:18px var(--gutter);
+  transition:background .4s, backdrop-filter .4s, padding .4s;
+}
+#ironfolk .nav.scrolled{background:rgba(12,10,8,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding-block:12px}
+#ironfolk .logo{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+#ironfolk .logo b{font:400 20px/1 var(--f-display);letter-spacing:.02em}
+#ironfolk .logo span{font:500 10px/1 var(--f-mono);letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase}
+#ironfolk .nav__links{display:flex;gap:30px;font:500 12px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase}
+#ironfolk .nav__links a{text-decoration:none;color:var(--ink-dim);transition:color .3s;position:relative}
+#ironfolk .nav__links a::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:1px;background:var(--accent);transition:right .4s var(--ease-out)}
+#ironfolk .nav__links a:hover{color:var(--ink)}
+#ironfolk .nav__links a:hover::after{right:0}
+@media (max-width:900px){#ironfolk .nav__links{display:none}}
+#ironfolk .logo b{white-space:nowrap}
+@media (max-width:520px){#ironfolk .logo span{display:none}}
+
+#ironfolk .btn{
+  --b:var(--accent);
+  display:inline-flex;align-items:center;gap:12px;
+  padding:16px 26px;border-radius:999px;
+  background:var(--b);color:#0c0a08;text-decoration:none;
+  font:500 12px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;
+  transition:background .5s, transform .3s var(--ease-out), box-shadow .5s;
+  box-shadow:0 0 0 0 transparent;
+  white-space:nowrap;
+}
+#ironfolk .btn:hover{box-shadow:0 10px 40px -10px var(--b)}
+#ironfolk .btn--ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+#ironfolk .btn--ghost:hover{border-color:var(--ink);box-shadow:none}
+#ironfolk .btn--sm{padding:12px 18px;font-size:11px}
+#ironfolk .btn svg{width:14px;height:14px;transition:transform .4s var(--ease-out)}
+#ironfolk .btn:hover svg{transform:translateX(4px)}
+
+
+#ironfolk .hero{position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden;--accent:var(--cobalt)}
+#ironfolk .panels{position:absolute;inset:0;display:flex}
+#ironfolk .panel{
+  position:relative;flex:1;overflow:hidden;cursor:pointer;
+  transition:flex 1.1s var(--ease);
+  border-right:1px solid rgba(0,0,0,.6);
+}
+#ironfolk .panel:last-child{border-right:0}
+#ironfolk .panel.is-active{flex:3.2}
+#ironfolk .panel img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 58%;
+  transform:scale(1.18);filter:saturate(.35) brightness(.45);
+  transition:transform 1.6s var(--ease-out), filter 1.1s var(--ease);
+}
+#ironfolk .panel.is-active img{transform:scale(1.04);filter:none}
+#ironfolk.is-loading .panel img{transform:scale(1.4)}
+#ironfolk .panel::after{ 
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,40%), rgba(255,220,170,.16), transparent 60%);
+  mix-blend-mode:screen;opacity:0;transition:opacity .5s;
+}
+#ironfolk .panel:hover::after{opacity:1}
+#ironfolk .panel__label{
+  position:absolute;top:92px;left:50%;transform:translateX(-50%) rotate(180deg);
+  writing-mode:vertical-rl;
+  font:500 12px/1 var(--f-mono);letter-spacing:.4em;text-transform:uppercase;color:var(--ink);
+  transition:opacity .5s;white-space:nowrap;
+}
+#ironfolk .panel__label i{font-style:normal;color:var(--muted);margin-bottom:14px;display:inline-block}
+#ironfolk .panel.is-active .panel__label{opacity:0}
+#ironfolk .hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(12,10,8,.75) 0%, transparent 22%),
+    linear-gradient(0deg, rgba(12,10,8,.96) 0%, rgba(12,10,8,.55) 32%, transparent 62%);
+}
+#ironfolk .hero__content{
+  position:absolute;left:var(--gutter);right:var(--gutter);bottom:clamp(28px,6vh,64px);z-index:2;
+  display:grid;grid-template-columns:1fr auto;align-items:end;gap:32px;
+  pointer-events:none;
+}
+#ironfolk .hero__content a, #ironfolk .hero__content button{pointer-events:auto}
+#ironfolk .eyebrow{
+  font:500 11px/1.4 var(--f-mono);letter-spacing:.3em;text-transform:uppercase;color:var(--ink-dim);
+  display:flex;align-items:center;gap:12px;
+}
+#ironfolk .eyebrow::before{content:"";width:28px;height:1px;background:var(--accent);transition:background .8s}
+#ironfolk .hero h1{
+  margin:18px 0 0;font:400 clamp(40px,8.4vw,142px)/.88 var(--f-display);
+  letter-spacing:-.01em;text-transform:uppercase;
+}
+#ironfolk .hero h1 .line{display:block;overflow:hidden;padding-bottom:.06em;white-space:nowrap}
+#ironfolk .hero h1 .line > span{display:inline-block;transform:translateY(110%);transition:transform 1.2s var(--ease-out)}
+#ironfolk.loaded .hero h1 .line > span{transform:none}
+#ironfolk.loaded .hero h1 .line:nth-child(2) > span{transition-delay:.08s}
+#ironfolk.loaded .hero h1 .line:nth-child(3) > span{transition-delay:.16s}
+#ironfolk .hero h1 em{
+  font:italic 600 1.12em/.8 var(--f-serif);text-transform:none;letter-spacing:-.01em;
+  color:var(--accent);transition:color .9s var(--ease);
+}
+#ironfolk .hero__side{display:flex;flex-direction:column;align-items:flex-end;gap:22px;text-align:right;max-width:340px}
+#ironfolk .hero__side p{margin:0;color:var(--ink-dim);font-size:15px}
+#ironfolk .hero__caption{font:500 11px/1.5 var(--f-mono);letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
+#ironfolk .hero__caption b{color:var(--accent);font-weight:500;transition:color .8s}
+#ironfolk .hero__progress{display:flex;gap:6px}
+#ironfolk .hero__progress span{width:34px;height:2px;background:var(--line);position:relative;overflow:hidden}
+#ironfolk .hero__progress span::after{content:"";position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left}
+#ironfolk .hero__progress span.is-active::after{animation:bar var(--dur,4.5s) linear forwards}
+#ironfolk .hero__progress.paused span.is-active::after{animation:none;transform:scaleX(1)}
+@keyframes bar{to{transform:scaleX(1)}}
+#ironfolk .fade-up{opacity:0;transform:translateY(20px);transition:opacity 1s var(--ease-out) .5s, transform 1s var(--ease-out) .5s}
+#ironfolk.loaded .fade-up{opacity:1;transform:none}
+
+@media (max-width:1100px){
+  #ironfolk .hero__content{grid-template-columns:1fr;gap:24px}
+  #ironfolk .hero__side{align-items:flex-start;text-align:left;max-width:none}
+  #ironfolk .hero__side p{display:none}
+}
+@media (max-width:900px){
+  #ironfolk .panel.is-active{flex:5}
+  #ironfolk .panel__label{font-size:10px;letter-spacing:.3em}
+}
+
+
+#ironfolk .marquee{
+  border-block:1px solid var(--line);overflow:hidden;white-space:nowrap;
+  padding:22px 0;background:var(--bg);position:relative;z-index:2;
+}
+#ironfolk .marquee__track{display:inline-flex;animation:marquee 38s linear infinite}
+#ironfolk .marquee span{
+  font:400 clamp(26px,4vw,52px)/1 var(--f-display);text-transform:uppercase;padding-right:.6em;
+  display:inline-flex;align-items:center;gap:.6em;
+}
+#ironfolk .marquee span em{font:italic 600 1.1em/1 var(--f-serif);text-transform:none}
+#ironfolk .marquee .c1{color:var(--cobalt)}#ironfolk .marquee .c2{color:var(--cinnabar)}#ironfolk .marquee .c3{color:var(--bronze)}
+#ironfolk .marquee svg{width:.55em;height:.55em;fill:var(--ink-dim)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+
+#ironfolk .manifesto{padding:clamp(100px,18vh,200px) var(--gutter);position:relative}
+#ironfolk .manifesto__wrap{max-width:1180px;margin:0 auto}
+#ironfolk .manifesto p{
+  margin:28px 0 0;font:400 clamp(28px,4.3vw,64px)/1.14 var(--f-body);letter-spacing:-.02em;font-weight:500;
+}
+#ironfolk .manifesto .w{opacity:.14;transition:opacity .25s linear}
+#ironfolk .manifesto .w.on{opacity:1}
+#ironfolk .manifesto .w.ser{font:italic 600 1.12em/1 var(--f-serif)}
+#ironfolk .manifesto .w.blue{color:var(--cobalt)}
+#ironfolk .manifesto .w.red{color:var(--cinnabar)}
+#ironfolk .manifesto .w.bronze{color:var(--bronze)}
+
+
+#ironfolk .collection{
+  position:relative;
+  --ch-bg:var(--cobalt-deep);
+  background:var(--ch-bg);transition:background 1s var(--ease);
+}
+#ironfolk .collection__head{
+  padding:clamp(80px,12vh,140px) var(--gutter) 0;display:flex;justify-content:space-between;align-items:end;gap:32px;flex-wrap:wrap;
+}
+#ironfolk .h2{margin:14px 0 0;font:400 clamp(40px,6.4vw,100px)/.9 var(--f-display);text-transform:uppercase;letter-spacing:-.01em}
+#ironfolk .h2 em{font:italic 600 1.1em/.8 var(--f-serif);text-transform:none;color:var(--accent)}
+#ironfolk .collection__head p{max-width:380px;margin:0;color:var(--ink-dim)}
+
+#ironfolk .chapters{display:grid;grid-template-columns:1.05fr 1fr;padding:0 var(--gutter)}
+#ironfolk .ch-media{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center}
+#ironfolk .ch-ghost{
+  position:absolute;left:-2vw;top:50%;transform:translateY(-50%);
+  font:400 clamp(90px,17vw,300px)/.8 var(--f-display);text-transform:uppercase;
+  color:transparent;-webkit-text-stroke:1px rgba(239,230,212,.09);white-space:nowrap;pointer-events:none;
+  transition:opacity .6s;
+}
+#ironfolk .ch-frame{
+  position:relative;width:min(100%, calc(80vh * .8056));aspect-ratio:928/1152;
+  border-radius:4px;overflow:hidden;
+  box-shadow:0 60px 120px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.06);
+}
+#ironfolk .ch-frame img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  clip-path:inset(100% 0 0 0);transform:scale(1.15);
+  transition:clip-path 1.1s var(--ease), transform 1.6s var(--ease-out);
+}
+#ironfolk .ch-frame img.is-active{clip-path:inset(0 0 0 0);transform:scale(1);z-index:2}
+#ironfolk .ch-frame img.was-active{clip-path:inset(0 0 0 0);z-index:1;transform:scale(1)}
+#ironfolk .ch-frame__tag{
+  position:absolute;z-index:3;left:16px;bottom:16px;
+  font:500 10px/1 var(--f-mono);letter-spacing:.25em;text-transform:uppercase;
+  background:rgba(12,10,8,.7);backdrop-filter:blur(6px);padding:9px 12px;border-radius:99px;
+}
+#ironfolk .ch-counter{
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:14px;font:500 11px/1 var(--f-mono);letter-spacing:.2em;color:var(--muted)
+}
+#ironfolk .ch-counter span{transition:color .4s}
+#ironfolk .ch-counter span.is-active{color:var(--ink)}
+
+#ironfolk .ch-list{position:relative}
+#ironfolk .chapter{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:12vh 0 12vh clamp(24px,5vw,90px)}
+#ironfolk .chapter__num{
+  font:400 clamp(70px,9vw,140px)/.8 var(--f-display);color:transparent;
+  -webkit-text-stroke:1px var(--c);opacity:.9;
+}
+#ironfolk .chapter__craft{margin-top:30px;font:500 11px/1 var(--f-mono);letter-spacing:.3em;text-transform:uppercase;color:var(--c)}
+#ironfolk .chapter h3{margin:14px 0 0;font:italic 600 clamp(52px,6.6vw,104px)/.9 var(--f-serif);letter-spacing:-.02em}
+#ironfolk .chapter__lead{font:400 clamp(20px,2vw,26px)/1.3 var(--f-body);margin:26px 0 0;max-width:520px;font-weight:500}
+#ironfolk .chapter__text{color:var(--ink-dim);max-width:500px;margin:18px 0 0}
+#ironfolk .specs{list-style:none;padding:0;margin:34px 0 0;max-width:500px;border-top:1px solid var(--line)}
+#ironfolk .specs li{
+  display:grid;grid-template-columns:130px 1fr;gap:16px;padding:13px 0;border-bottom:1px solid var(--line);
+  font:400 13px/1.4 var(--f-mono);
+}
+#ironfolk .specs li span:first-child{color:var(--muted);text-transform:uppercase;letter-spacing:.15em;font-size:11px;padding-top:2px}
+#ironfolk .chapter .btn{margin-top:36px;align-self:flex-start;--b:var(--c)}
+#ironfolk .chapter__img{display:none}
+#ironfolk .chapter > *:not(.chapter__img){opacity:.18;transform:translateY(24px);transition:opacity .9s var(--ease-out), transform .9s var(--ease-out)}
+#ironfolk .chapter.is-active > *{opacity:1;transform:none}
+#ironfolk .chapter.is-active > *:nth-child(3){transition-delay:.05s}
+#ironfolk .chapter.is-active > *:nth-child(4){transition-delay:.1s}
+#ironfolk .chapter.is-active > *:nth-child(5){transition-delay:.15s}
+#ironfolk .chapter.is-active > *:nth-child(6){transition-delay:.2s}
+#ironfolk .chapter.is-active > *:nth-child(7){transition-delay:.25s}
+#ironfolk .chapter.is-active > *:nth-child(8){transition-delay:.3s}
+
+@media (max-width:900px){
+  #ironfolk .chapters{grid-template-columns:1fr}
+  #ironfolk .ch-media{display:none}
+  #ironfolk .chapter{min-height:auto;padding:70px 0 30px}
+  #ironfolk .chapter__img{display:block;order:-1;margin:0 0 28px;border-radius:4px;overflow:hidden;aspect-ratio:4/4.4}
+  #ironfolk .chapter__img img{width:100%;height:100%;object-fit:cover;object-position:50% 60%}
+  #ironfolk .chapter > *:not(.chapter__img){opacity:1;transform:none}
+  #ironfolk .chapter__num{font-size:64px}
+}
+
+
+#ironfolk .gift{position:relative;overflow:hidden;padding:clamp(100px,16vh,180px) var(--gutter);background:var(--lacquer);--accent:var(--cinnabar)}
+#ironfolk .gift::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:
+    radial-gradient(60% 50% at 85% 20%, rgba(255,75,31,.28), transparent 70%),
+    radial-gradient(50% 60% at 10% 90%, rgba(224,168,63,.18), transparent 70%);
+}
+#ironfolk .gift__wrap{position:relative;max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(40px,6vw,100px);align-items:center}
+#ironfolk .gift__lead{color:var(--ink-dim);max-width:480px;margin:26px 0 0}
+#ironfolk .countdown{display:flex;gap:clamp(10px,2vw,26px);margin-top:44px}
+#ironfolk .countdown div{display:flex;flex-direction:column;gap:10px}
+#ironfolk .countdown b{font:400 clamp(44px,6vw,88px)/.9 var(--f-display);font-variant-numeric:tabular-nums;color:var(--ink)}
+#ironfolk .countdown span{font:500 10px/1 var(--f-mono);letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+#ironfolk .countdown i{font:400 clamp(44px,6vw,88px)/.9 var(--f-display);color:var(--cinnabar);font-style:normal}
+#ironfolk .who{list-style:none;padding:0;margin:0;border-top:1px solid var(--line)}
+#ironfolk .who li{
+  display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:baseline;
+  padding:26px 0;border-bottom:1px solid var(--line);
+  transition:padding .5s var(--ease-out);
+}
+#ironfolk .who li:hover{padding-left:12px}
+#ironfolk .who small{font:500 11px/1 var(--f-mono);letter-spacing:.2em;color:var(--cinnabar)}
+#ironfolk .who strong{display:block;font:italic 600 clamp(28px,3vw,40px)/1 var(--f-serif)}
+#ironfolk .who span{display:block;color:var(--ink-dim);margin-top:8px;font-size:15px}
+@media (max-width:900px){#ironfolk .gift__wrap{grid-template-columns:1fr}}
+
+
+#ironfolk .custom{padding:clamp(100px,16vh,180px) var(--gutter);background:var(--bg-2);--accent:var(--gold)}
+#ironfolk .custom__head{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;gap:32px;align-items:end;flex-wrap:wrap}
+#ironfolk .custom__head p{max-width:440px;color:var(--ink-dim);margin:0}
+#ironfolk .custom__grid{max-width:1280px;margin:54px auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+#ironfolk .ccard{
+  background:var(--bg-2);padding:30px 26px 26px;display:flex;flex-direction:column;gap:12px;
+  transition:background .5s;
+}
+#ironfolk .ccard:hover{background:var(--bg)}
+#ironfolk .ccard__n{font:500 10px/1 var(--f-mono);letter-spacing:.28em;color:var(--gold)}
+#ironfolk .ccard h3{margin:0;font:italic 600 clamp(26px,2.6vw,34px)/1 var(--f-serif)}
+#ironfolk .ccard p{margin:0;color:var(--ink-dim);font-size:15px;flex:1}
+#ironfolk .ccard button{
+  align-self:flex-start;margin-top:6px;
+  font:500 11px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);
+  border-bottom:1px solid var(--line);padding-bottom:6px;transition:color .3s,border-color .3s;
+}
+#ironfolk .ccard button:hover{color:var(--gold);border-color:var(--gold)}
+#ironfolk .custom__note{
+  max-width:1280px;margin:34px auto 0;display:flex;gap:28px;flex-wrap:wrap;
+  font:500 11px/1.6 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+#ironfolk .custom__note b{color:var(--ink);font-weight:500}
+@media (min-width:1001px){#ironfolk .ccard h3{min-height:2.05em}}
+@media (max-width:1000px){#ironfolk .custom__grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){#ironfolk .custom{padding-block:70px}#ironfolk .custom__grid{grid-template-columns:1fr;margin-top:36px}#ironfolk .ccard{padding:24px 20px}#ironfolk .custom__note{gap:14px}}
+
+
+#ironfolk .order{padding:clamp(100px,16vh,180px) var(--gutter);background:var(--bg);position:relative}
+#ironfolk .order__wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(32px,6vw,100px);align-items:start}
+#ironfolk .order__stage{position:sticky;top:90px}
+#ironfolk .tilt{
+  position:relative;border-radius:6px;overflow:hidden;aspect-ratio:928/1152;
+  transform-style:preserve-3d;transition:transform .6s var(--ease-out);
+  box-shadow:0 50px 100px -40px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.06);
+}
+#ironfolk .tilt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .7s var(--ease)}
+#ironfolk .tilt img.is-active{opacity:1}
+#ironfolk .tilt__glare{
+  position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(500px circle at var(--gx,50%) var(--gy,50%), rgba(255,240,215,.22), transparent 55%);
+  mix-blend-mode:overlay;z-index:2
+}
+#ironfolk .tilt:hover .tilt__glare{opacity:1}
+#ironfolk .order__stage-cap{margin-top:18px;display:flex;justify-content:space-between;font:500 11px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+#ironfolk .step{margin-top:44px}
+#ironfolk .step:first-of-type{margin-top:36px}
+#ironfolk .step__t{font:500 11px/1 var(--f-mono);letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;gap:14px}
+#ironfolk .step__t b{color:var(--ink);font-weight:500}
+#ironfolk .opts{display:grid;gap:10px}
+#ironfolk .opts--3{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+#ironfolk .opt{
+  --c:var(--ink);
+  position:relative;text-align:left;border:1px solid var(--line);border-radius:6px;padding:14px;
+  transition:border-color .35s, background .35s, transform .3s var(--ease-out);
+  display:flex;flex-direction:column;gap:10px;
+}
+#ironfolk .opt:hover{border-color:rgba(239,230,212,.4)}
+#ironfolk .opt[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb, var(--c) 12%, transparent)}
+#ironfolk .opt__thumb{aspect-ratio:1;border-radius:4px;overflow:hidden}
+#ironfolk .opt__thumb img{width:100%;height:100%;object-fit:cover;object-position:50% 60%;transform:scale(1.35);transition:transform .6s var(--ease-out)}
+#ironfolk .opt:hover .opt__thumb img{transform:scale(1.5)}
+#ironfolk .opt__name{font:italic 600 22px/1 var(--f-serif)}
+#ironfolk .opt__sub{font:500 10px/1.3 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+#ironfolk .opt__price{font:400 16px/1.1 var(--f-display);margin-top:2px;color:var(--gold)}
+#ironfolk .opt__check{
+  position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;
+  border:1px solid var(--line);display:grid;place-items:center;transition:all .3s;background:rgba(12,10,8,.6)
+}
+#ironfolk .opt[aria-pressed="true"] .opt__check{background:var(--c);border-color:var(--c)}
+#ironfolk .opt__check svg{width:10px;height:10px;stroke:#0c0a08;opacity:0;transition:opacity .3s}
+#ironfolk .opt[aria-pressed="true"] .opt__check svg{opacity:1}
+
+#ironfolk .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px}
+#ironfolk .qty button{width:48px;height:48px;font-size:20px;display:grid;place-items:center;transition:color .3s}
+#ironfolk .qty button:hover{color:var(--accent)}
+#ironfolk .qty output{min-width:44px;text-align:center;font:400 20px/1 var(--f-display)}
+#ironfolk .qty-row{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+#ironfolk .total{text-align:right}
+#ironfolk .total small{display:block;font:500 10px/1 var(--f-mono);letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+#ironfolk .total b{font:400 clamp(34px,4vw,52px)/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+
+#ironfolk .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#ironfolk .field{position:relative}
+#ironfolk .field input, #ironfolk .field textarea{
+  width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);
+  color:var(--ink);font:400 18px/1.4 var(--f-body);padding:26px 0 10px;outline:none;border-radius:0;
+  transition:border-color .3s;
+}
+#ironfolk .field textarea{resize:none;height:84px}
+#ironfolk .field label{
+  position:absolute;left:0;top:28px;color:var(--muted);font-size:16px;pointer-events:none;
+  transition:all .3s var(--ease-out);
+}
+#ironfolk .field input:focus, #ironfolk .field textarea:focus{border-color:var(--accent)}
+#ironfolk .field input:focus + label, #ironfolk .field input:not(:placeholder-shown) + label, #ironfolk .field textarea:focus + label, #ironfolk .field textarea:not(:placeholder-shown) + label{
+  top:4px;font:500 10px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)
+}
+#ironfolk .field.err input{border-color:var(--cinnabar)}
+#ironfolk .field--full{grid-column:1/-1}
+#ironfolk .submit-row{margin-top:34px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+#ironfolk .submit-row .btn{padding:20px 32px}
+#ironfolk .submit-row p{margin:0;font-size:13px;color:var(--muted);max-width:280px}
+#ironfolk .order__done{display:none;border:1px solid var(--line);border-radius:6px;padding:40px;margin-top:36px}
+#ironfolk .order__done h3{margin:0;font:italic 600 44px/1 var(--f-serif)}
+#ironfolk .order__done p{color:var(--ink-dim)}
+#ironfolk .order.sent form{display:none}
+#ironfolk .order.sent .order__done{display:block;animation:pop .8s var(--ease-out)}
+@keyframes pop{from{opacity:0;transform:translateY(20px)}}
+
+@media (max-width:900px){
+  #ironfolk .order__wrap{grid-template-columns:1fr}
+  #ironfolk .order__stage{position:relative;top:0;max-width:420px}
+  #ironfolk .fields{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  #ironfolk .opts--3{gap:6px}
+  #ironfolk .opt{padding:8px;gap:8px}
+  #ironfolk .opt__name{font-size:17px}
+  #ironfolk .opt__sub{font-size:9px;letter-spacing:.08em}
+  #ironfolk .opt__check{top:6px;right:6px}
+}
+
+
+#ironfolk .footer{border-top:1px solid var(--line);padding:60px var(--gutter) 110px;position:relative;overflow:hidden}
+#ironfolk .footer__big{
+  font:400 clamp(60px,15vw,260px)/.8 var(--f-display);text-transform:uppercase;letter-spacing:-.02em;
+  color:transparent;-webkit-text-stroke:1px rgba(239,230,212,.18);white-space:nowrap;
+}
+#ironfolk .footer__row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:40px;font:500 11px/1.6 var(--f-mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+#ironfolk .footer__legal{max-width:640px;text-transform:none;letter-spacing:.02em;font-family:var(--f-body);font-size:12px}
+
+
+#ironfolk .mcta{
+  position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;display:none;
+  transform:translateY(140%);transition:transform .6s var(--ease-out);
+}
+#ironfolk .mcta .btn{width:100%;justify-content:center;padding:18px}
+#ironfolk .mcta.show{transform:none}
+@media (max-width:900px){#ironfolk .mcta{display:block}}
+
+
+#ironfolk .reveal{opacity:0;transform:translateY(40px);transition:opacity 1.1s var(--ease-out), transform 1.1s var(--ease-out)}
+#ironfolk .reveal.in{opacity:1;transform:none}
+#ironfolk .reveal.d1{transition-delay:.1s}#ironfolk .reveal.d2{transition-delay:.2s}
+
+@media (prefers-reduced-motion:reduce){
+  #ironfolk *, #ironfolk *::before, #ironfolk *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  #ironfolk .grain{display:none}
+  #ironfolk .manifesto .w{opacity:1}
+}
+
+
+
+
+#ironfolk{scroll-padding-top:86px}
+#ironfolk section[id]{scroll-margin-top:72px}
+
+
+#ironfolk .nav{padding-top:calc(18px + env(safe-area-inset-top, 0px))}
+#ironfolk .nav.scrolled{padding-top:calc(12px + env(safe-area-inset-top, 0px))}
+@media (min-width:901px){ #ironfolk .order__stage{top:calc(90px + env(safe-area-inset-top, 0px))} }
+#ironfolk .footer{padding-bottom:calc(110px + env(safe-area-inset-bottom, 0px))}
+
+
+@supports (height:100svh){
+  #ironfolk .ch-media{height:100svh}
+  #ironfolk .chapter{min-height:100svh}
+}
+
+
+@media (min-width:1600px){
+  #ironfolk .collection__head, #ironfolk .chapters{max-width:1600px;margin-inline:auto}
+  #ironfolk .hero__content{left:0;right:0;max-width:1720px;margin-inline:auto;padding-inline:var(--gutter)}
+}
+
+
+@media (min-width:700px) and (max-width:1100px){
+  #ironfolk .hero__side p{display:block;max-width:430px}
+}
+@media (min-width:760px) and (max-width:900px){
+  #ironfolk .nav__links{display:flex;gap:18px;font-size:10px;letter-spacing:.14em}
+}
+@media (min-width:700px) and (max-width:900px){
+  #ironfolk .gift__wrap{grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+  #ironfolk .chapter__img{max-width:470px}
+  #ironfolk .order__stage{max-width:470px}
+}
+
+
+@media (max-width:620px){
+  #ironfolk .hero{min-height:560px}
+  #ironfolk .hero h1{font-size:clamp(32px,10.4vw,54px)}
+  #ironfolk .hero h1 .line{white-space:normal}
+  #ironfolk .hero__content{bottom:clamp(20px,4vh,40px);gap:18px}
+  #ironfolk .hero__side{gap:16px}
+  #ironfolk .panel__label{top:76px;font-size:9px;letter-spacing:.24em}
+
+  #ironfolk .marquee{padding:16px 0}
+  #ironfolk .marquee span{font-size:clamp(22px,7vw,34px)}
+
+  #ironfolk .manifesto{padding-block:76px}
+  #ironfolk .manifesto p{font-size:clamp(24px,6.4vw,36px);line-height:1.2}
+
+  #ironfolk .collection__head{padding-top:72px}
+  #ironfolk .specs li{grid-template-columns:1fr;gap:3px;padding:11px 0}
+  #ironfolk .specs li span:first-child{padding-top:0}
+
+  #ironfolk .countdown{gap:12px;margin-top:32px}
+  #ironfolk .countdown b, #ironfolk .countdown i{font-size:clamp(34px,11vw,50px)}
+  #ironfolk .who li{padding:20px 0}
+
+  #ironfolk .custom{padding-block:64px 40px}
+  #ironfolk .order{padding-block:40px 60px}
+  #ironfolk .gift{padding-block:60px}
+  #ironfolk .order__stage{max-width:none}
+  #ironfolk .submit-row{flex-direction:column;align-items:stretch;gap:14px}
+  #ironfolk .submit-row .btn{justify-content:center}
+  #ironfolk .submit-row p{max-width:none}
+  #ironfolk .order__done{padding:26px}
+  #ironfolk .order__done h3{font-size:32px}
+
+  #ironfolk .footer{padding-top:44px}
+  #ironfolk .footer__row{gap:14px}
+}
+
+
+@media (max-width:380px){
+  #ironfolk .logo b{font-size:17px}
+  #ironfolk .btn{padding:14px 18px;letter-spacing:.14em}
+  #ironfolk .btn--sm{padding:11px 14px;font-size:10px}
+  #ironfolk .opt{padding:8px;gap:7px}
+  #ironfolk .opt__name{font-size:15px}
+  #ironfolk .opt__price{font-size:17px}
+  #ironfolk .total b{font-size:30px}
+  #ironfolk .field input, #ironfolk .field textarea{font-size:16px}
+}
+
+
+@media (max-width:330px){
+  #ironfolk{--gutter:12px}
+  #ironfolk .nav{gap:10px}
+  #ironfolk .logo span{display:none}
+  #ironfolk .hero h1{font-size:clamp(27px,11vw,40px)}
+  #ironfolk .marquee span{font-size:21px}
+  #ironfolk .manifesto p{font-size:21px}
+  #ironfolk .chapter h3{font-size:40px}
+  #ironfolk .chapter__num{font-size:54px}
+  #ironfolk .opts--3{gap:5px}
+  #ironfolk .opt{padding:6px;gap:6px}
+  #ironfolk .opt__name{font-size:13px}
+  #ironfolk .opt__sub{font-size:8px;letter-spacing:.06em}
+  #ironfolk .opt__price{font-size:15px}
+  #ironfolk .opt__check{width:16px;height:16px;top:5px;right:5px}
+  #ironfolk .qty button{width:42px;height:42px}
+  #ironfolk .countdown b, #ironfolk .countdown i{font-size:30px}
+  #ironfolk .who strong{font-size:24px}
+  #ironfolk .total b{font-size:26px}
+  #ironfolk .footer__row{font-size:10px}
+}
+
+
+@media (min-width:620px) and (max-width:760px){
+  #ironfolk .chapter__img{max-width:520px}
+  #ironfolk .order__stage{max-width:520px}
+  #ironfolk .gift__lead, #ironfolk .collection__head p{max-width:520px}
+  #ironfolk .fields{grid-template-columns:1fr 1fr}
+}
+
+
+@media (min-width:901px) and (max-width:1100px){
+  #ironfolk .chapters{grid-template-columns:1fr .95fr}
+  #ironfolk .ch-frame{width:min(100%, calc(64vh * .8056))}
+  #ironfolk .chapter{padding-left:clamp(20px,3vw,48px)}
+}
+
+
+@media (min-width:2200px){
+  #ironfolk{font-size:19px}
+  #ironfolk .collection__head, #ironfolk .chapters{max-width:1900px}
+  #ironfolk .gift__wrap, #ironfolk .order__wrap{max-width:1680px}
+  #ironfolk .hero__content{max-width:2100px}
+  #ironfolk .hero__side{max-width:420px}
+}
+
+
+@media (hover:none),(pointer:coarse){
+  #ironfolk .cursor, #ironfolk .cursor-dot{display:none!important}
+  #ironfolk .panel::after{display:none}
+  #ironfolk .panel.is-active .panel__label{opacity:.35}
+  #ironfolk .btn:hover{box-shadow:none}
+  #ironfolk .who li:hover{padding-left:0}
+  #ironfolk .nav__links a{padding-block:8px}
+  #ironfolk .qty button{width:52px;height:52px}
+  #ironfolk .opt{min-height:56px}
+}
+
+
+@media (prefers-contrast:more){
+  #ironfolk{--ink:#fff;--ink-dim:#ded5c4;--muted:#b0a695;--line:rgba(255,255,255,.4)}
+  #ironfolk .manifesto .w{opacity:.4}
+  #ironfolk .chapter > *:not(.chapter__img){opacity:.6}
+}
+@media (forced-colors:active){
+  #ironfolk .grain, #ironfolk .cursor, #ironfolk .cursor-dot{display:none}
+  #ironfolk .btn, #ironfolk .opt, #ironfolk .specs li{border:1px solid CanvasText}
+}
+
+
+@media print{
+  #ironfolk .loader, #ironfolk .grain, #ironfolk .cursor, #ironfolk .cursor-dot, #ironfolk .mcta, #ironfolk .nav, #ironfolk .marquee, #ironfolk .ch-media{display:none!important}
+  #ironfolk{background:#fff;color:#111;font-size:12pt;overflow:visible}
+  #ironfolk .hero{height:auto;min-height:0;page-break-after:always}
+  #ironfolk .hero::after, #ironfolk .gift::before{display:none}
+  #ironfolk .panels{position:static;display:block}
+  #ironfolk .panel{break-inside:avoid}
+  #ironfolk .panel img{position:static;height:auto;filter:none;transform:none}
+  #ironfolk .hero__content{position:static;color:#111}
+  #ironfolk .hero h1 .line > span{transform:none}
+  #ironfolk .collection, #ironfolk .gift, #ironfolk .order{background:#fff!important;color:#111;page-break-inside:avoid}
+  #ironfolk .chapters{display:block}
+  #ironfolk .chapter{min-height:0;padding:18pt 0;break-inside:avoid;page-break-inside:avoid}
+  #ironfolk .chapter > *, #ironfolk .reveal, #ironfolk .fade-up, #ironfolk .manifesto .w{opacity:1!important;transform:none!important}
+  #ironfolk .chapter__img{display:block;max-width:60mm}
+  #ironfolk .chapter__num, #ironfolk .footer__big{-webkit-text-stroke:0;color:#111}
+  #ironfolk .h2, #ironfolk .hero h1, #ironfolk .chapter h3{color:#111}
+  #ironfolk .specs li, #ironfolk .who li, #ironfolk .footer{border-color:#bbb}
+  #ironfolk .ink, #ironfolk .chapter__text, #ironfolk .gift__lead{color:#333}
+  #ironfolk a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;color:#555}
+  #ironfolk .order__stage, #ironfolk .tilt{display:none}
+  #ironfolk .submit-row, #ironfolk .qty-row, #ironfolk form{break-inside:avoid}
+}
+
+
+@media (orientation:landscape) and (max-height:560px){
+  #ironfolk .hero{min-height:0}
+  #ironfolk .hero h1{font-size:clamp(28px,5.6vw,46px)}
+  #ironfolk .hero__content{bottom:16px;grid-template-columns:1fr auto;gap:20px}
+  #ironfolk .hero__side p{display:none}
+  #ironfolk .panel__label{top:64px}
+  #ironfolk .tach{width:min(190px,36vh)}
+  #ironfolk .loader__hint{bottom:14px}
+  #ironfolk .chapter{min-height:auto;padding:56px 0 30px}
+}
+
+/* сдвиг под меню Тильды: поставьте --tmenu:60px в блоке #ironfolk выше */
+#ironfolk .nav{top:var(--tmenu)}
+@media (min-width:901px){#ironfolk .order__stage{top:calc(90px + var(--tmenu))}}
+#ironfolk section[id]{scroll-margin-top:calc(72px + var(--tmenu))}
+
+/* каталог Тильды: нужен для цен и корзины, визуально скрыт */
+#rec4831817501{position:relative!important;height:1px!important;overflow:hidden!important;opacity:.01!important;pointer-events:none!important;padding:0!important;margin:0!important}
+#ironfolk .buyrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:34px;align-self:flex-start}
+#ironfolk .buyrow .btn{margin-top:0;align-self:auto}
+#ironfolk .buyrow__price{font:700 clamp(20px,3.6vw,26px)/1 var(--f-serif);color:var(--c,var(--ink))}
+#ironfolk .buyrow .btn[hidden]{display:none}
+#ironfolk .btn--buy{--b:var(--c)}
+#ironfolk .chapter .buyrow + .btn[data-pick]{margin-top:16px;background:transparent;color:var(--ink);border:1px solid var(--line)}
+#ironfolk .chapter .buyrow + .btn[data-pick]:hover{border-color:var(--c);box-shadow:none}
+@media (max-width:620px){#ironfolk .buyrow{gap:12px;margin-top:26px}#ironfolk .buyrow .btn{flex:1 1 auto;justify-content:center}}
+</style>
+
+<div id="ironfolk" class="is-loading">
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- LOADER: тахометр -->
+<div class="loader" aria-hidden="true">
+  <div class="tach" id="tach">
+    <svg viewBox="0 0 200 200">
+      <g transform="rotate(135 100 100)">
+        <circle class="tach__track" cx="100" cy="100" r="88" pathLength="1000" stroke-dasharray="750 1000"/>
+        <circle class="tach__red" cx="100" cy="100" r="88" pathLength="1000" stroke-dasharray="107 1000" stroke-dashoffset="-643"/>
+        <circle class="tach__fill" id="tachFill" cx="100" cy="100" r="88" pathLength="1000" stroke-dasharray="0 1000"/>
+      </g>
+      <g class="tach__ticks" id="tachTicks"></g>
+    </svg>
+    <div class="tach__read"><span class="tach__num" id="tachNum">0</span><span class="tach__unit">RPM</span></div>
+  </div>
+  <div class="loader__hint">прогреваем двигатель</div>
+</div>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a class="logo" href="#top"><b>IRON FOLK</b><span>HLGN ceramics</span></a>
+  <nav class="nav__links" aria-label="Разделы">
+    <a href="#collection">Коллекция</a>
+    <a href="#custom">Под заказ</a>
+    <a href="#gift">В подарок</a>
+  </nav>
+  <a class="btn btn--sm magnetic" href="#order" data-cursor>Предзаказ</a>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="panels" id="panels">
+    <div class="panel is-active" data-i="0" data-accent="var(--cobalt)" data-name="Гжель «Синий дым»" role="button" tabindex="0" aria-label="Гжель — Синий дым">
+      <img src="https://static.tildacdn.com/stor3531-3465-4538-a463-306239363465/a1392346638b0384306f5e7f5eaa6d87.jpg" alt="Керамическая пивная кружка в стиле гжель: кобальтовая роспись, рельефное лобовое Harley-Davidson">
+      <span class="panel__label"><i>01</i> Гжель</span>
+    </div>
+    <div class="panel" data-i="1" data-accent="var(--cinnabar)" data-name="Хохлома «Жар»" role="button" tabindex="0" aria-label="Хохлома — Жар">
+      <img src="https://static.tildacdn.com/stor6466-3462-4338-a330-643239373234/26d06410bd45b6f4773bcfc5a8a27e86.jpg" alt="Керамическая пивная кружка в стиле хохлома: чёрный лак, киноварь и золото, череп в рябине">
+      <span class="panel__label"><i>02</i> Хохлома</span>
+    </div>
+    <div class="panel" data-i="2" data-accent="var(--bronze)" data-name="«Чугун»" role="button" tabindex="0" aria-label="Чугун">
+      <img src="https://static.tildacdn.com/stor3932-6665-4134-b565-383062343763/043e70bc0529953905b2a62c6c9404a3.jpg" alt="Керамическая пивная кружка из состаренной латуни с рельефным лобовым Harley-Davidson">
+      <span class="panel__label"><i>03</i> Чугун</span>
+    </div>
+  </div>
+
+  <div class="hero__content">
+    <div>
+      <div class="eyebrow fade-up">Керамические пивные кружки для владельцев Harley-Davidson · предзаказ к Новому году</div>
+      <h1>
+        <span class="line"><span>Гжель</span></span>
+        <span class="line"><span>и хохлома</span></span>
+        <span class="line"><span>надели <em>косухи</em></span></span>
+      </h1>
+    </div>
+    <div class="hero__side fade-up">
+      <p>Русский промысел для владельцев Harley-Davidson. Три характера. Одна кружка пива — и все в гараже спрашивают, где взял.</p>
+      <div class="hero__caption" id="heroCaption"><b>01</b> — Гжель «Синий дым»</div>
+      <div class="hero__progress" id="heroProgress"><span class="is-active"></span><span></span><span></span></div>
+      <a class="btn magnetic" href="#collection" data-cursor>Смотреть коллекцию
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track" id="marquee">
+    <span><b class="c1">Гжель</b> <svg viewBox="0 0 10 10"><path d="M5 0l1.4 3.6L10 5 6.4 6.4 5 10 3.6 6.4 0 5l3.6-1.4z"/></svg>
+      <b class="c2">Хохлома</b> <svg viewBox="0 0 10 10"><path d="M5 0l1.4 3.6L10 5 6.4 6.4 5 10 3.6 6.4 0 5l3.6-1.4z"/></svg>
+      <b class="c3">Чугун</b> <svg viewBox="0 0 10 10"><path d="M5 0l1.4 3.6L10 5 6.4 6.4 5 10 3.6 6.4 0 5l3.6-1.4z"/></svg>
+      <em>live to ride</em> <svg viewBox="0 0 10 10"><path d="M5 0l1.4 3.6L10 5 6.4 6.4 5 10 3.6 6.4 0 5l3.6-1.4z"/></svg>
+      <em>ride to drink</em> <svg viewBox="0 0 10 10"><path d="M5 0l1.4 3.6L10 5 6.4 6.4 5 10 3.6 6.4 0 5l3.6-1.4z"/></svg></span>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section class="manifesto" id="manifesto">
+  <div class="manifesto__wrap">
+    <div class="eyebrow reveal">Манифест</div>
+    <p id="manifestoText">Гжель расписывает посуду [blue]кобальтом уже третий век. Хохлома прячет узор под [red]киноварью и [red]золотом с семнадцатого. А в 1903‑м в деревянном сарае в [bronze]Милуоки Уилл Харли и Артур Дэвидсон собрали первый мотоцикл. Мы решили: им давно пора [ser]выпить [ser]вместе.</p>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="collection" id="collection">
+  <div class="collection__head">
+    <div>
+      <div class="eyebrow reveal">Коллекция · 3 характера</div>
+      <h2 class="h2 reveal d1">Выбери <em>свой</em><br>характер</h2>
+    </div>
+    <p class="reveal d2">Две кружки — для тех, кто любит, когда у гостей отвисает челюсть. Третья — для тех, кому не нужно ничего объяснять.</p>
+  </div>
+
+  <div class="chapters">
+    <div class="ch-media" aria-hidden="true">
+      <div class="ch-ghost" id="chGhost">Гжель</div>
+      <div class="ch-frame">
+        <img class="is-active" src="https://static.tildacdn.com/stor3531-3465-4538-a463-306239363465/a1392346638b0384306f5e7f5eaa6d87.jpg" alt="">
+        <img src="https://static.tildacdn.com/stor6466-3462-4338-a330-643239373234/26d06410bd45b6f4773bcfc5a8a27e86.jpg" alt="">
+        <img src="https://static.tildacdn.com/stor3932-6665-4134-b565-383062343763/043e70bc0529953905b2a62c6c9404a3.jpg" alt="">
+        <div class="ch-frame__tag" id="chTag">01 / 03</div>
+      </div>
+      <div class="ch-counter" id="chCounter"><span class="is-active">01</span><span>02</span><span>03</span></div>
+    </div>
+
+    <div class="ch-list">
+      <article class="chapter is-active" data-i="0" data-bg="#0a1333" data-ghost="Гжель" style="--c:var(--cobalt)">
+        <div class="chapter__img"><img src="https://static.tildacdn.com/stor3531-3465-4538-a463-306239363465/a1392346638b0384306f5e7f5eaa6d87.jpg" alt="Кружка «Синий дым» в стиле гжель" loading="lazy"></div>
+        <div class="chapter__num">01</div>
+        <div class="chapter__craft">Промысел: гжель</div>
+        <h3>Синий дым</h3>
+        <p class="chapter__lead">Бабушка оценит узор. Байкер — всё остальное.</p>
+        <p class="chapter__text">Кобальт по белой глазури — классика, которую знает каждый. Только вместо пасторальных цветов — розы с черепами, а на боку рельефное лобовое Harley-Davidson. Выглядит как музейный экспонат, пока на него не посмотришь внимательно.</p>
+        <ul class="specs">
+          <li><span>Палитра</span><span>Кобальт / белая глазурь</span></li>
+          <li><span>Рельеф</span><span>Лобовое Harley-Davidson</span></li>
+          <li><span>Мотив</span><span>Розы-черепа, завитки гжели</span></li>
+        </ul>
+        
+        <div class="buyrow"><span class="buyrow__price" data-price-for="gzhel"></span><button class="btn magnetic btn--buy" type="button" data-cart="gzhel" data-cursor>В корзину <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 2.2h2l1.7 7.6h7.1L14 4.6H5.2"/><circle cx="6.6" cy="13" r="1.1"/><circle cx="12" cy="13" r="1.1"/></svg></button></div>
+        <button class="btn magnetic" data-pick="gzhel" data-cursor>Хочу «Синий дым»
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
+      </article>
+
+      <article class="chapter" data-i="1" data-bg="#1c0806" data-ghost="Хохлома" style="--c:var(--cinnabar)">
+        <div class="chapter__img"><img src="https://static.tildacdn.com/stor6466-3462-4338-a330-643239373234/26d06410bd45b6f4773bcfc5a8a27e86.jpg" alt="Кружка «Жар» в стиле хохлома" loading="lazy"></div>
+        <div class="chapter__num">02</div>
+        <div class="chapter__craft">Промысел: хохлома</div>
+        <h3>Жар</h3>
+        <p class="chapter__lead">Хохлома всегда была про огонь. Мы просто добавили выхлоп.</p>
+        <p class="chapter__text">Чёрный лак, киноварь и золото. Огненные травы бегут по корпусу, рябина прорастает вокруг лобового Harley-Davidson, и оно горит красным, как стоп-сигнал в ночи. Ставишь на стол — и разговор сам начинается.</p>
+        <ul class="specs">
+          <li><span>Палитра</span><span>Чёрный лак / киноварь / золото</span></li>
+          <li><span>Рельеф</span><span>Лобовое Harley-Davidson в рябине</span></li>
+          <li><span>Мотив</span><span>Огненная травка, ягоды, черепа</span></li>
+        </ul>
+        
+        <div class="buyrow"><span class="buyrow__price" data-price-for="khokhloma"></span><button class="btn magnetic btn--buy" type="button" data-cart="khokhloma" data-cursor>В корзину <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 2.2h2l1.7 7.6h7.1L14 4.6H5.2"/><circle cx="6.6" cy="13" r="1.1"/><circle cx="12" cy="13" r="1.1"/></svg></button></div>
+        <button class="btn magnetic" data-pick="khokhloma" data-cursor>Хочу «Жар»
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
+      </article>
+
+      <article class="chapter" data-i="2" data-bg="#141210" data-ghost="Чугун" style="--c:var(--bronze)">
+        <div class="chapter__img"><img src="https://static.tildacdn.com/stor3932-6665-4134-b565-383062343763/043e70bc0529953905b2a62c6c9404a3.jpg" alt="Кружка «Чугун» из состаренной латуни" loading="lazy"></div>
+        <div class="chapter__num">03</div>
+        <div class="chapter__craft">Промысел: гараж</div>
+        <h3>Чугун</h3>
+        <p class="chapter__lead">Без цветочков. Только лобовое.</p>
+        <p class="chapter__text">Матовая патина состаренной латуни, потёртости, тёмные прожилки. Кружка выглядит так, будто полвека провисела на крюке в мастерской. Для тех, у кого на жилетке больше нашивок, чем пуговиц.</p>
+        <ul class="specs">
+          <li><span>Фактура</span><span>Состаренная латунь</span></li>
+          <li><span>Рельеф</span><span>Лобовое Harley-Davidson</span></li>
+          <li><span>Декор</span><span>Никакого. И это принципиально</span></li>
+        </ul>
+        
+        <div class="buyrow"><span class="buyrow__price" data-price-for="iron"></span><button class="btn magnetic btn--buy" type="button" data-cart="iron" data-cursor>В корзину <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 2.2h2l1.7 7.6h7.1L14 4.6H5.2"/><circle cx="6.6" cy="13" r="1.1"/><circle cx="12" cy="13" r="1.1"/></svg></button></div>
+        <button class="btn magnetic" data-pick="iron" data-cursor>Хочу «Чугун»
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
+      </article>
+
+
+
+
+    </div>
+  </div>
+</section>
+
+
+<!-- GIFT -->
+<section class="gift" id="gift">
+  <div class="gift__wrap">
+    <div>
+      <div class="eyebrow reveal">Новый год</div>
+      <h2 class="h2 reveal d1">Под ёлку.<br><em>Или в гараж.</em></h2>
+      <p class="gift__lead reveal d2">Подарок, который не уйдёт на антресоль. Его поставят на самое видное место — и будут пить из него весь следующий сезон.</p>
+      <div class="countdown reveal d2" id="countdown" aria-label="До Нового года">
+        <div><b data-u="d">00</b><span>дней</span></div><i>:</i>
+        <div><b data-u="h">00</b><span>часов</span></div><i>:</i>
+        <div><b data-u="m">00</b><span>минут</span></div>
+      </div>
+    </div>
+    <ul class="who">
+      <li class="reveal"><small>01</small><div><strong>Себе</strong><span>Потому что заслужил. Весь сезон без аварий — это уже повод.</span></div></li>
+      <li class="reveal d1"><small>02</small><div><strong>Брату по клубу</strong><span>Он поймёт с первого взгляда. Объяснять ничего не придётся.</span></div></li>
+      <li class="reveal d2"><small>03</small><div><strong>Отцу</strong><span>Тому, кто до сих пор рассказывает про свой первый мотоцикл.</span></div></li>
+      <li class="reveal d2"><small>04</small><div><strong>Шефу</strong><span>Когда галстук — не вариант, а коньяк — слишком скучно.</span></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- CUSTOM -->
+<section class="custom" id="custom">
+  <div class="custom__head">
+    <div>
+      <div class="eyebrow reveal">Под заказ</div>
+      <h2 class="h2 reveal d1">Своя кружка<br><em>со своим знаком</em></h2>
+    </div>
+    <p class="reveal d2">Делаем тиражи под клубы, заведения и события.</p>
+  </div>
+
+  <div class="custom__grid">
+    <article class="ccard reveal">
+      <div class="ccard__n">01</div>
+      <h3>Мотоклубу</h3>
+      <p>Нашивка клуба в рельефе, цвета чаптера, номер в партии на дне. Такие кружки дарят на вступление и ставят за барной стойкой в клабхаусе.</p>
+      <button type="button" data-custom="мотоклуб">Обсудить тираж</button>
+    </article>
+
+    <article class="ccard reveal d1">
+      <div class="ccard__n">02</div>
+      <h3>Бару и пабу</h3>
+      <p>Логотип заведения вместо лобового, объём под вашу подачу. Гости допивают — и спрашивают, где купить такую же. Продаются прямо у стойки.</p>
+      <button type="button" data-custom="бар или паб">Обсудить тираж</button>
+    </article>
+
+    <article class="ccard reveal d2">
+      <div class="ccard__n">03</div>
+      <h3>Фестивалю</h3>
+      <p>Год и название события в рельефе — кружка становится памятным знаком, а не одноразовым стаканом. Берут на мотослёты и тематические сходки.</p>
+      <button type="button" data-custom="фестиваль">Обсудить тираж</button>
+    </article>
+
+    <article class="ccard reveal d2">
+      <div class="ccard__n">04</div>
+      <h3>Музыкальной группе</h3>
+      <p>Обложка альбома или логотип группы на боку. Мерч, который не растянется после стирки и переживёт сам коллектив.</p>
+      <button type="button" data-custom="музыкальная группа">Обсудить тираж</button>
+    </article>
+  </div>
+
+  <div class="custom__note">
+    <span><b>Свой рельеф</b> — лепим форму под ваш знак</span>
+    <span><b>Своя палитра</b> — любые ваши фантазии</span>
+    <span><b>Тираж и сроки</b> — считаем по заявке</span>
+  </div>
+</section>
+
+<!-- ORDER -->
+<section class="order" id="order">
+  <div class="order__wrap">
+    <div class="order__stage">
+      <div class="tilt" id="tilt">
+        <img class="is-active" data-k="gzhel" src="https://static.tildacdn.com/stor3531-3465-4538-a463-306239363465/a1392346638b0384306f5e7f5eaa6d87.jpg" alt="Выбранная кружка">
+        <img data-k="khokhloma" src="https://static.tildacdn.com/stor6466-3462-4338-a330-643239373234/26d06410bd45b6f4773bcfc5a8a27e86.jpg" alt="">
+        <img data-k="iron" src="https://static.tildacdn.com/stor3932-6665-4134-b565-383062343763/043e70bc0529953905b2a62c6c9404a3.jpg" alt="">
+        <div class="tilt__glare"></div>
+      </div>
+      <div class="order__stage-cap"><span id="stageName">Гжель «Синий дым»</span><span id="stageMake">литьё в форме</span></div>
+    </div>
+
+    <div>
+      <div class="eyebrow reveal">Предзаказ</div>
+      <h2 class="h2 reveal d1">Собери<br><em>свою</em></h2>
+
+      <form id="orderForm" novalidate>
+        <div class="step">
+          <div class="step__t"><b>01</b> Характер</div>
+          <div class="opts opts--3" id="optMug"></div>
+        </div>
+
+        <div class="step">
+          <div class="step__t"><b>02</b> Количество</div>
+          <div class="qty-row">
+            <div class="qty">
+              <button type="button" id="qMinus" aria-label="Меньше">−</button>
+              <output id="qVal">1</output>
+              <button type="button" id="qPlus" aria-label="Больше">+</button>
+            </div>
+            <div class="total"><small>Итого</small><b id="total">0 ₽</b></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step__t"><b>03</b> Контакты</div>
+          <div class="fields">
+            <div class="field"><input id="fName" name="name" placeholder=" " autocomplete="name"><label for="fName">Имя</label></div>
+            <div class="field"><input id="fPhone" name="phone" type="tel" placeholder=" " autocomplete="tel" inputmode="tel"><label for="fPhone">Телефон</label></div>
+            <div class="field field--full"><textarea id="fNote" name="note" placeholder=" "></textarea><label for="fNote">Комментарий: в подарок, гравировка, сроки…</label></div>
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button class="btn magnetic" type="submit" data-cursor>Оформить предзаказ
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
+          <button class="btn btn--ghost magnetic" type="button" id="buyNow" data-cursor>Купить сейчас <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 2.2h2l1.7 7.6h7.1L14 4.6H5.2"/><circle cx="6.6" cy="13" r="1.1"/><circle cx="12" cy="13" r="1.1"/></svg></button><p>Перезвоним, уточним детали и сроки. Оплата — после подтверждения.</p>
+        </div>
+      </form>
+
+      <div class="order__done" role="status">
+        <h3>Мотор заведён.</h3>
+        <p>Заявка принята — скоро свяжемся, чтобы уточнить детали. А пока можно выбрать, кто получит вторую кружку.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__big" aria-hidden="true">Iron Folk</div>
+  <div class="footer__row">
+    <span>HLGN ceramics · hlgn.ru/ceramics</span>
+    <span class="footer__legal">Harley‑Davidson — зарегистрированный товарный знак Harley‑Davidson Motor Company. HLGN Ceramics не является официальным партнёром или лицензиатом правообладателя и действует в рамках государственной политики импортозамещения.</span>
+  </div>
+</footer>
+
+<div class="mcta" id="mcta"><a class="btn" href="#order">Оформить предзаказ</a></div>
+</div>
+
+<script>
+(() => {
+
+  /* ==================================================================
+     КОНФИГ. Цены — ЗАГЛУШКИ, заменить на реальные от клиента.
+     ================================================================== */
+  const MUGS = {
+    gzhel:            { name:'Синий дым',  craft:'Гжель',        full:'Гжель «Синий дым»',      color:'var(--cobalt)',   img:'https://static.tildacdn.com/stor3531-3465-4538-a463-306239363465/a1392346638b0384306f5e7f5eaa6d87.jpg' },
+    khokhloma:        { name:'Жар',        craft:'Хохлома',      full:'Хохлома «Жар»',          color:'var(--cinnabar)', img:'https://static.tildacdn.com/stor6466-3462-4338-a330-643239373234/26d06410bd45b6f4773bcfc5a8a27e86.jpg' },
+    iron:             { name:'Чугун',      craft:'Брутал',       full:'«Чугун»',                color:'var(--bronze)',   img:'https://static.tildacdn.com/stor3932-6665-4134-b565-383062343763/043e70bc0529953905b2a62c6c9404a3.jpg' },
+  };
+  const PRICES = new Proxy({}, { get: (t, k) => tCatalogPrice(String(k)) });
+
+  const ROOT = document.getElementById('ironfolk');
+  const $  = (s, r=ROOT) => r.querySelector(s);
+  const $$ = (s, r=ROOT) => [...r.querySelectorAll(s)];
+  const rub = n => n.toLocaleString('ru-RU') + ' ₽';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer: fine)').matches;
+
+  /* ---------- loader: tachometer ---------- */
+  const ticks = $('#tachTicks');
+  for (let i = 0; i <= 7; i++) {
+    const a = (135 + i * (270 / 7)) * Math.PI / 180;
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', 100 + Math.cos(a) * 72); l.setAttribute('y1', 100 + Math.sin(a) * 72);
+    l.setAttribute('x2', 100 + Math.cos(a) * 80); l.setAttribute('y2', 100 + Math.sin(a) * 80);
+    if (i === 7) l.style.stroke = 'var(--cinnabar)';
+    ticks.appendChild(l);
+  }
+  const finishLoad = () => {
+    document.documentElement.style.overflow = '';
+    ROOT.classList.add('loaded');
+    ROOT.classList.remove('is-loading');
+    startHero();
+  };
+  if (reduced) { finishLoad(); }
+  else {
+    const fill = $('#tachFill'), num = $('#tachNum'), tach = $('#tach');
+    const DUR = 1500, t0 = performance.now();
+    // "перегазовка": разгон, лёгкий откат, выход в красную зону
+    const curve = p => p < .55 ? (p/.55) ** 1.6 * .72 : p < .7 ? .72 - (p-.55)/.15 * .14 : .58 + ((p-.7)/.3) ** .7 * .42;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / DUR), v = curve(p);
+      fill.setAttribute('stroke-dasharray', `${v * 750} 1000`);
+      num.textContent = Math.round(v * 7000 / 10) * 10;
+      tach.classList.toggle('redline', v > .86);
+      if (p < 1) requestAnimationFrame(tick); else setTimeout(finishLoad, 220);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  document.documentElement.style.overflow = 'hidden';
+
+  /* ---------- nav ---------- */
+  const nav = $('#nav'), mcta = $('#mcta');
+  const onScrollNav = () => {
+    nav.classList.toggle('scrolled', scrollY > 40);
+    const ord = $('#order').getBoundingClientRect();
+    mcta.classList.toggle('show', scrollY > innerHeight * .8 && ord.top > innerHeight * .6);
+  };
+  addEventListener('scroll', onScrollNav, { passive:true }); onScrollNav();
+
+  /* ---------- hero accordion ---------- */
+  const hero = $('#hero'), panels = $$('.panel'), bars = $$('#heroProgress span'), cap = $('#heroCaption');
+  const HERO_DUR = 4500;
+  let heroI = 0, heroTimer = null, heroPausedUntil = 0;
+  document.documentElement.style.setProperty('--dur', HERO_DUR + 'ms');
+  function setHero(i) {
+    heroI = i;
+    panels.forEach((p, k) => p.classList.toggle('is-active', k === i));
+    bars.forEach((b, k) => { b.classList.remove('is-active'); void b.offsetWidth; b.classList.toggle('is-active', k === i); });
+    hero.style.setProperty('--accent', panels[i].dataset.accent);
+    cap.innerHTML = `<b>0${i + 1}</b> — ${panels[i].dataset.name}`;
+  }
+  function startHero() {
+    clearInterval(heroTimer);
+    if (reduced) return;
+    heroTimer = setInterval(() => {
+      if (Date.now() < heroPausedUntil) return;
+      setHero((heroI + 1) % panels.length);
+    }, HERO_DUR);
+  }
+  panels.forEach((p, i) => {
+    const activate = () => { heroPausedUntil = Date.now() + 7000; $('#heroProgress').classList.add('paused'); if (heroI !== i) setHero(i); };
+    p.addEventListener('mouseenter', () => fine && activate());
+    p.addEventListener('click', activate);
+    p.addEventListener('keydown', e => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), activate()));
+    p.addEventListener('mousemove', e => {
+      const r = p.getBoundingClientRect();
+      p.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      p.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+  hero.addEventListener('mouseleave', () => { heroPausedUntil = 0; $('#heroProgress').classList.remove('paused'); setHero(heroI); });
+
+  /* ---------- marquee: duplicate content for seamless loop ---------- */
+  const mq = $('#marquee'); mq.innerHTML += mq.innerHTML;
+
+  /* ---------- manifesto: word-by-word light-up ---------- */
+  const mText = $('#manifestoText');
+  mText.innerHTML = mText.textContent.trim().split(/\s+/).map(w => {
+    const m = w.match(/^\[(\w+)\](.*)$/);
+    return m ? `<span class="w ${m[1]}">${m[2]}</span>` : `<span class="w">${w}</span>`;
+  }).join(' ');
+  const words = $$('.w', mText);
+  const onScrollManifesto = () => {
+    const r = mText.getBoundingClientRect();
+    const p = (innerHeight * .85 - r.top) / (r.height + innerHeight * .35);
+    const n = Math.floor(Math.max(0, Math.min(1, p)) * words.length * 1.05);
+    words.forEach((w, k) => w.classList.toggle('on', k < n));
+  };
+  addEventListener('scroll', onScrollManifesto, { passive:true }); onScrollManifesto();
+
+  /* ---------- collection chapters ---------- */
+  const coll = $('#collection'), chapters = $$('.chapter'), frames = $$('.ch-frame img'),
+        ghost = $('#chGhost'), tag = $('#chTag'), counter = $$('#chCounter span');
+  let chI = 0;
+  function setChapter(i) {
+    if (i === chI) return;
+    frames.forEach(f => f.classList.remove('was-active'));
+    frames[chI].classList.replace('is-active', 'was-active');
+    frames[i].classList.add('is-active');
+    chI = i;
+    chapters.forEach((c, k) => c.classList.toggle('is-active', k === i));
+    counter.forEach((c, k) => c.classList.toggle('is-active', k === i));
+    coll.style.setProperty('--ch-bg', chapters[i].dataset.bg);
+    coll.style.setProperty('--accent', MUGS[Object.keys(MUGS)[i]].color);
+    ghost.style.opacity = 0;
+    setTimeout(() => { ghost.textContent = chapters[i].dataset.ghost; ghost.style.opacity = 1; }, 300);
+    tag.textContent = `0${i + 1} / 0${chapters.length}`;
+  }
+  const chObs = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && setChapter(+e.target.dataset.i)),
+    { rootMargin: '-45% 0px -45% 0px' });
+  chapters.forEach(c => chObs.observe(c));
+  coll.style.setProperty('--accent', 'var(--cobalt)');
+
+  /* ---------- reveal ---------- */
+  const rObs = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); rObs.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -10% 0px' });
+  $$('.reveal').forEach(el => rObs.observe(el));
+
+  /* ---------- countdown to New Year ---------- */
+  const cd = $('#countdown');
+  const target = new Date(new Date().getFullYear() + 1, 0, 1, 0, 0, 0);
+  const pad = n => String(n).padStart(2, '0');
+  const tickCd = () => {
+    let s = Math.max(0, (target - new Date()) / 1000);
+    const d = Math.floor(s / 86400); s -= d * 86400;
+    const h = Math.floor(s / 3600);  s -= h * 3600;
+    const m = Math.floor(s / 60);
+    $('[data-u="d"]', cd).textContent = pad(d);
+    $('[data-u="h"]', cd).textContent = pad(h);
+    $('[data-u="m"]', cd).textContent = pad(m);
+  };
+  tickCd(); setInterval(tickCd, 15000);
+
+  /* ---------- order configurator ---------- */
+  const state = { mug:'gzhel', qty:1 };
+  const check = '<span class="opt__check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2"><path d="M2 5.2l2 2 4-4.4"/></svg></span>';
+  $('#optMug').innerHTML = Object.entries(MUGS).map(([k, m]) => `
+    <button type="button" class="opt" data-mug="${k}" style="--c:${m.color}" aria-pressed="false">
+      ${check}
+      <span class="opt__thumb"><img src="${m.img}" alt="" loading="lazy"></span>
+      <span class="opt__name">${m.name}</span>
+      <span class="opt__sub">${m.craft}</span>
+      <span class="opt__price">${PRICES[k] ? rub(PRICES[k]) : 'по запросу'}</span>
+    </button>`).join('');
+  const orderSec = $('#order'), tiltImgs = $$('#tilt img');
+  function render() {
+    $$('[data-mug]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mug === state.mug));
+    tiltImgs.forEach(i => i.classList.toggle('is-active', i.dataset.k === state.mug));
+    $('#stageName').textContent = MUGS[state.mug].full;
+    $('#qVal').textContent = state.qty;
+    const price = PRICES[state.mug];
+    $('#total').textContent = price ? rub(price * state.qty) : 'по запросу';
+    orderSec.style.setProperty('--accent', MUGS[state.mug].color);
+  }
+  $('#optMug').addEventListener('click', e => { const b = e.target.closest('[data-mug]'); if (b) { state.mug = b.dataset.mug; render(); } });
+  $('#qMinus').onclick = () => { state.qty = Math.max(1, state.qty - 1); render(); };
+  $('#qPlus').onclick  = () => { state.qty = Math.min(20, state.qty + 1); render(); };
+  $$('[data-custom]').forEach(b => b.addEventListener('click', () => {
+    const note = $('#fNote');
+    note.value = `Кастомная партия: ${b.dataset.custom}. Расскажите про тираж, знак и сроки.`;
+    orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    setTimeout(() => note.focus({ preventScroll: true }), reduced ? 0 : 700);
+  }));
+
+  $$('[data-pick]').forEach(b => b.addEventListener('click', () => {
+    state.mug = b.dataset.pick; render();
+    orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+  }));
+  render();
+
+  // phone mask +7 (___) ___-__-__
+  const phone = $('#fPhone');
+  phone.addEventListener('input', () => {
+    let d = phone.value.replace(/\D/g, '');
+    if (!d) { phone.value = ''; return; }
+    if (d[0] === '8') d = '7' + d.slice(1);
+    if (d[0] !== '7') d = '7' + d;
+    d = d.slice(0, 11);
+    let s = '+7';
+    if (d.length > 1) s += ' (' + d.slice(1, 4);
+    if (d.length >= 4) s += ')';
+    if (d.length > 4) s += ' ' + d.slice(4, 7);
+    if (d.length > 7) s += '-' + d.slice(7, 9);
+    if (d.length > 9) s += '-' + d.slice(9, 11);
+    phone.value = s;
+  });
+
+  $('#orderForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const nameOk = $('#fName').value.trim().length > 1;
+    const phoneOk = phone.value.replace(/\D/g, '').length === 11;
+    $('#fName').parentElement.classList.toggle('err', !nameOk);
+    phone.parentElement.classList.toggle('err', !phoneOk);
+    if (!nameOk || !phoneOk) return;
+    const payload = {
+      name: $('#fName').value.trim(), phone: phone.value, note: $('#fNote').value.trim(),
+      mug: MUGS[state.mug].full, make: 'Литьё в форме', qty: state.qty,
+      total: PRICES[state.mug] ? PRICES[state.mug] * state.qty : 'по запросу',
+    };
+    // TODO: отправка заявки (форма Tilda / вебхук / CRM)
+    console.log('order', payload);
+    orderSec.classList.add('sent');
+  });
+
+  /* ---------- tilt ---------- */
+  const tilt = $('#tilt');
+  if (fine && !reduced) {
+    tilt.addEventListener('mousemove', e => {
+      const r = tilt.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      tilt.style.transform = `perspective(1100px) rotateY(${(x - .5) * 12}deg) rotateX(${(.5 - y) * 12}deg) scale(1.02)`;
+      tilt.style.setProperty('--gx', x * 100 + '%'); tilt.style.setProperty('--gy', y * 100 + '%');
+    });
+    tilt.addEventListener('mouseleave', () => tilt.style.transform = '');
+  }
+
+  /* ---------- cursor + magnetic ---------- */
+  if (fine && !reduced) {
+    const ring = $('.cursor'), dot = $('.cursor-dot');
+    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+    addEventListener('mousemove', e => { ROOT.classList.add('has-cursor'); mx = e.clientX; my = e.clientY; dot.style.transform = `translate(${mx}px,${my}px)`; });
+    (function loop() {
+      rx += (mx - rx) * .18; ry += (my - ry) * .18;
+      ring.style.transform = `translate(${rx}px,${ry}px)`;
+      requestAnimationFrame(loop);
+    })();
+    document.addEventListener('mouseover', e => ring.classList.toggle('is-hover', !!e.target.closest('[data-cursor], .opt, .qty button')));
+
+    $$('.magnetic').forEach(b => {
+      b.addEventListener('mousemove', e => {
+        const r = b.getBoundingClientRect();
+        b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .25}px, ${(e.clientY - r.top - r.height / 2) * .35}px)`;
+      });
+      b.addEventListener('mouseleave', () => b.style.transform = '');
+    });
+  }
+
+
+  /* ============ Тильда: цены из каталога и корзина ============ */
+  function tCatCard(key) {
+    var uid = {"gzhel": "574264069383", "khokhloma": "744794325043", "iron": "308465064463"}[key];
+    if (!uid) return null;
+    return document.querySelector('#rec4831817501 .js-product[data-product-uid="' + uid + '"]');
+  }
+  function tCatalogPrice(key) {
+    var c = tCatCard(key); if (!c) return null;
+    var el = c.querySelector('.js-product-price, .js-store-prod-price-val');
+    if (!el) return null;
+    var n = parseInt(String(el.textContent).replace(/[^0-9]/g, ''), 10);
+    return (isFinite(n) && n > 0) ? n : null;
+  }
+  function tAddToCart(key, qty) {
+    var card = tCatCard(key), price = tCatalogPrice(key);
+    if (!card || !price || typeof window.tcart__addProduct !== 'function') {
+      state.mug = key; render();
+      orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+      return;
+    }
+    var d = card.dataset;
+    window.tcart__addProduct({
+      name: {"gzhel": "Керамическая пивная кружка Iron Folk «Синий дым»", "khokhloma": "Керамическая пивная кружка Iron Folk «Жар»", "iron": "Керамическая пивная кружка Iron Folk «Чугун»"}[key], price: price, sku: {"gzhel": "IF-GZHEL", "khokhloma": "IF-ZHAR", "iron": "IF-CHUGUN"}[key],
+      img: d.productImg || '', url: d.productUrl || location.href,
+      quantity: Math.max(1, (qty | 0) || 1),
+      uid: d.productUid, lid: d.productLid || d.productUid, gen_uid: d.productGenUid,
+      part_uids: d.productPartUid ? [d.productPartUid] : [],
+      recid: '4831817501',
+      pack_label: d.productPackLabel, pack_x: d.productPackX,
+      pack_y: d.productPackY, pack_z: d.productPackZ, pack_m: d.productPackM
+    });
+  }
+  function tSyncPrices() {
+    var ready = false;
+    $$('[data-price-for]').forEach(function (el) {
+      var p = tCatalogPrice(el.dataset.priceFor);
+      el.textContent = p ? rub(p) : 'цена по запросу';
+      var b = el.parentElement.querySelector('[data-cart]');
+      if (b) b.hidden = !p;
+      if (p) ready = true;
+    });
+    $$('.opt[data-mug]').forEach(function (b) {
+      var p = tCatalogPrice(b.dataset.mug), el = b.querySelector('.opt__price');
+      if (el) el.textContent = p ? rub(p) : 'по запросу';
+    });
+    render();
+    return ready;
+  }
+  $$('[data-cart]').forEach(function (b) {
+    b.addEventListener('click', function () { tAddToCart(b.dataset.cart, 1); });
+  });
+  var tBuyNow = $('#buyNow');
+  if (tBuyNow) tBuyNow.addEventListener('click', function () { tAddToCart(state.mug, state.qty); });
+  if (!tSyncPrices()) {
+    var tTries = 0;
+    var tTimer = setInterval(function () {
+      if (tSyncPrices() || ++tTries > 60) clearInterval(tTimer);
+    }, 250);
+  }
+
+})();
+</script>
