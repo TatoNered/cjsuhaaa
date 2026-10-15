@@ -708,6 +708,9 @@ html{scroll-padding-top:86px}
 @media (min-width:901px){#ironfolk .order__stage{top:calc(90px + var(--tmenu))}}
 #ironfolk section[id]{scroll-margin-top:calc(72px + var(--tmenu))}
 
+/* не менять: hidden здесь ломает sticky (фото в коллекции и конфигураторе) */
+#ironfolk,#ironfolk.is-loading{overflow-x:clip!important;overflow-y:visible!important}
+
 /* каталог Тильды: нужен для цен и корзины, визуально скрыт */
 #rec4831817501{position:relative!important;height:1px!important;min-height:0!important;max-height:1px!important;overflow:hidden!important;opacity:.01!important;pointer-events:none!important;padding:0!important;margin:0!important;border:0!important}
 #record4831817501{height:1px!important;min-height:0!important;max-height:1px!important;overflow:hidden!important}

@@ -72,7 +72,12 @@ out_css = (f"html{{scroll-padding-top:86px}}\n"
            + f"\n/* сдвиг под меню Тильды: поставьте --tmenu:60px в блоке {ROOT} выше */\n"
            + f"{ROOT} .nav{{top:var(--tmenu)}}\n"
            + f"@media (min-width:901px){{{ROOT} .order__stage{{top:calc(90px + var(--tmenu))}}}}\n"
-           + f"{ROOT} section[id]{{scroll-margin-top:calc(72px + var(--tmenu))}}\n")
+           + f"{ROOT} section[id]{{scroll-margin-top:calc(72px + var(--tmenu))}}\n"
+           # body{overflow-x:hidden} после префиксации превращает контейнер
+           # в скролл-контейнер и ломает каждый position:sticky внутри.
+           # clip обрезает по горизонтали, но скролл-контейнер не создаёт.
+           + f"\n/* не менять: hidden здесь ломает sticky (фото в коллекции и конфигураторе) */\n"
+           + f"{ROOT},{ROOT}.is-loading{{overflow-x:clip!important;overflow-y:visible!important}}\n")
 
 # ---------- JS: body -> контейнер ----------
 js = js.replace("document.body.classList", "ROOT.classList")
