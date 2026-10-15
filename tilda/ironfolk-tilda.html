@@ -984,7 +984,23 @@ html{scroll-padding-top:86px}
       <div class="eyebrow reveal">Предзаказ</div>
       <h2 class="h2 reveal d1">Собери<br><em>свою</em></h2>
 
-      <form id="orderForm" novalidate>
+      <!-- Форма Тильды. Набор сервисов приёма данных — такой же, как у всех
+           остальных форм заявок на сайте, поэтому предзаказ падает туда же,
+           куда и заявки с других страниц. -->
+      <form id="orderForm" name="orderForm" role="form" action="#" method="POST" novalidate
+            class="t-form js-form-proccess"
+            data-formactiontype="2"
+            data-success-callback="ironfolkOrderSent">
+        <input type="hidden" name="formservices[]" value="f322bcf62308448c77d737d4d796918b">
+        <input type="hidden" name="formservices[]" value="d0ec8bf9f3dac7e2977f0f213fe4cb64">
+        <input type="hidden" name="formservices[]" value="0d2cd85ecbf96f5305899dd9f87b7447">
+        <input type="hidden" name="formservices[]" value="138b0eb61bd750a9c4804f04aa33ccde">
+        <input type="hidden" name="formservices[]" value="b5bd3112452690ebe45f4c97b5f82322">
+        <input type="hidden" name="formservices[]" value="c64cf0017611dc326221ba679fab4a7b">
+        <input type="hidden" name="tildaspec-formname" value="Предзаказ Iron Folk">
+        <input type="hidden" id="fMug"   name="Кружка"    value="">
+        <input type="hidden" id="fQty"   name="Количество" value="">
+        <input type="hidden" id="fTotal" name="Сумма"      value="">
         <div class="step">
           <div class="step__t"><b>01</b> Характер</div>
           <div class="opts opts--3" id="optMug"></div>
@@ -1236,6 +1252,12 @@ html{scroll-padding-top:86px}
     const price = PRICES[state.mug];
     $('#total').textContent = price ? rub(price * state.qty) : 'по запросу';
     orderSec.style.setProperty('--accent', MUGS[state.mug].color);
+    // скрытые поля формы держим в актуальном состоянии: Тильда может
+    // перехватить отправку раньше нашего обработчика
+    const hMug = $('#fMug'), hQty = $('#fQty'), hTotal = $('#fTotal');
+    if (hMug)   hMug.value   = MUGS[state.mug].full;
+    if (hQty)   hQty.value   = String(state.qty);
+    if (hTotal) hTotal.value = price ? rub(price * state.qty) : 'по запросу';
   }
   $('#optMug').addEventListener('click', e => { const b = e.target.closest('[data-mug]'); if (b) { state.mug = b.dataset.mug; render(); } });
   $('#qMinus').onclick = () => { state.qty = Math.max(1, state.qty - 1); render(); };
@@ -1270,22 +1292,23 @@ html{scroll-padding-top:86px}
     phone.value = s;
   });
 
+  /* Отправку делает Тильда — форма размечена как её собственная.
+     Здесь только проверка полей до отправки и показ результата.
+     Если движка форм Тильды на странице нет (страница открыта сама по себе),
+     отправлять некуда — показываем подтверждение локально. */
+  const tildaForms = () => !!(window.tildaForm && typeof window.tildaForm === 'object');
+
+  // показываем экран «отправлено» — Тильда зовёт это по data-success-callback
+  window.ironfolkOrderSent = () => orderSec.classList.add('sent');
+
   $('#orderForm').addEventListener('submit', e => {
-    e.preventDefault();
     const nameOk = $('#fName').value.trim().length > 1;
     const phoneOk = phone.value.replace(/\D/g, '').length === 11;
     $('#fName').parentElement.classList.toggle('err', !nameOk);
     phone.parentElement.classList.toggle('err', !phoneOk);
-    if (!nameOk || !phoneOk) return;
-    const payload = {
-      name: $('#fName').value.trim(), phone: phone.value, note: $('#fNote').value.trim(),
-      mug: MUGS[state.mug].full, make: 'Литьё в форме', qty: state.qty,
-      total: PRICES[state.mug] ? PRICES[state.mug] * state.qty : 'по запросу',
-    };
-    // TODO: отправка заявки (форма Tilda / вебхук / CRM)
-    console.log('order', payload);
-    orderSec.classList.add('sent');
-  });
+    if (!nameOk || !phoneOk) { e.preventDefault(); e.stopPropagation(); return; }
+    if (!tildaForms()) { e.preventDefault(); window.ironfolkOrderSent(); }
+  }, true);
 
   /* ---------- tilt ---------- */
   const tilt = $('#tilt');
