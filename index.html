@@ -531,7 +531,7 @@ section[id]{scroll-margin-top:72px}
 /* вырезы и жесты: шапка, липкая колонка и подвал держат safe-area */
 .nav{padding-top:calc(18px + env(safe-area-inset-top, 0px))}
 .nav.scrolled{padding-top:calc(12px + env(safe-area-inset-top, 0px))}
-.order__stage{top:calc(90px + env(safe-area-inset-top, 0px))}
+@media (min-width:901px){ .order__stage{top:calc(90px + env(safe-area-inset-top, 0px))} }
 .footer{padding-bottom:calc(110px + env(safe-area-inset-bottom, 0px))}
 
 /* высота вьюпорта без скачков адресной строки */
@@ -912,7 +912,7 @@ section[id]{scroll-margin-top:72px}
       <div class="eyebrow reveal">Под заказ</div>
       <h2 class="h2 reveal d1">Своя кружка<br><em>со своим знаком</em></h2>
     </div>
-    <p class="reveal d2">Тот же корпус и та же роспись, но рельеф и символика — ваши. Делаем тиражи под клубы, заведения и события.</p>
+    <p class="reveal d2">Делаем тиражи под клубы, заведения и события.</p>
   </div>
 
   <div class="custom__grid">
@@ -947,7 +947,7 @@ section[id]{scroll-margin-top:72px}
 
   <div class="custom__note">
     <span><b>Свой рельеф</b> — лепим форму под ваш знак</span>
-    <span><b>Своя палитра</b> — гжель, хохлома или монохром</span>
+    <span><b>Своя палитра</b> — любые ваши фантазии</span>
     <span><b>Тираж и сроки</b> — считаем по заявке</span>
   </div>
 </section>
