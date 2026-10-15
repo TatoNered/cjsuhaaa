@@ -748,7 +748,7 @@ section[id]{scroll-margin-top:72px}
     <a href="#custom">Под заказ</a>
     <a href="#gift">В подарок</a>
   </nav>
-  <a class="btn btn--sm magnetic" href="#order" data-cursor>Предзаказ</a>
+  <a class="btn btn--sm magnetic" href="#preorder" data-cursor>Предзаказ</a>
 </header>
 
 <main id="top">
@@ -957,7 +957,7 @@ section[id]{scroll-margin-top:72px}
 </section>
 
 <!-- ORDER -->
-<section class="order" id="order">
+<section class="order" id="preorder">
   <div class="order__wrap">
     <div class="order__stage">
       <div class="tilt" id="tilt">
@@ -1025,7 +1025,7 @@ section[id]{scroll-margin-top:72px}
   </div>
 </footer>
 
-<div class="mcta" id="mcta"><a class="btn" href="#order">Оформить предзаказ</a></div>
+<div class="mcta" id="mcta"><a class="btn" href="#preorder">Оформить предзаказ</a></div>
 
 <script>
 (() => {
@@ -1084,10 +1084,29 @@ section[id]{scroll-margin-top:72px}
   const nav = $('#nav'), mcta = $('#mcta');
   const onScrollNav = () => {
     nav.classList.toggle('scrolled', scrollY > 40);
-    const ord = $('#order').getBoundingClientRect();
+    const ord = $('#preorder').getBoundingClientRect();
     mcta.classList.toggle('show', scrollY > innerHeight * .8 && ord.top > innerHeight * .6);
   };
   addEventListener('scroll', onScrollNav, { passive:true }); onScrollNav();
+
+  /* Якоря прокручиваем сами. На Тильде её скрипты перехватывают часть
+     ссылок вида #имя (например, #order зарезервирован под открытие
+     корзины) и гасят переход — страница просто не двигается. */
+  const ANCHOR_SCOPE = document.getElementById('ironfolk') || document;
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a) return;
+    if (ANCHOR_SCOPE !== document && !ANCHOR_SCOPE.contains(a)) return;
+    const id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+  }, true);
 
   /* ---------- hero accordion ---------- */
   const hero = $('#hero'), panels = $$('.panel'), bars = $$('#heroProgress span'), cap = $('#heroCaption');
@@ -1195,7 +1214,7 @@ section[id]{scroll-margin-top:72px}
       <span class="opt__sub">${m.craft}</span>
       <span class="opt__price">${PRICES[k] ? rub(PRICES[k]) : 'по запросу'}</span>
     </button>`).join('');
-  const orderSec = $('#order'), tiltImgs = $$('#tilt img');
+  const orderSec = $('#preorder'), tiltImgs = $$('#tilt img');
   function render() {
     $$('[data-mug]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mug === state.mug));
     tiltImgs.forEach(i => i.classList.toggle('is-active', i.dataset.k === state.mug));
