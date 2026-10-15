@@ -127,8 +127,11 @@ body = body.replace(
 
 out_css += (
   "\n/* каталог Тильды: нужен для цен и корзины, визуально скрыт */\n"
-  "#rec%s{position:relative!important;height:1px!important;overflow:hidden!important;"
-  "opacity:.01!important;pointer-events:none!important;padding:0!important;margin:0!important}\n"
+  "#rec%s{position:relative!important;height:1px!important;min-height:0!important;"
+  "max-height:1px!important;overflow:hidden!important;opacity:.01!important;"
+  "pointer-events:none!important;padding:0!important;margin:0!important;border:0!important}\n"
+  "#record%s{height:1px!important;min-height:0!important;max-height:1px!important;"
+  "overflow:hidden!important}\n"
   "%s .buyrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:34px;align-self:flex-start}\n"
   "%s .buyrow .btn{margin-top:0;align-self:auto}\n"
   "%s .buyrow__price{font:700 clamp(20px,3.6vw,26px)/1 var(--f-serif);color:var(--c,var(--ink))}\n"
@@ -139,7 +142,7 @@ out_css += (
   "%s .chapter .buyrow + .btn[data-pick]:hover{border-color:var(--c);box-shadow:none}\n"
   "@media (max-width:620px){%s .buyrow{gap:12px;margin-top:26px}"
   "%s .buyrow .btn{flex:1 1 auto;justify-content:center}}\n"
-  % (CAT_REC, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT))
+  % (CAT_REC, CAT_REC, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT, ROOT))
 
 # PRICES -> живые цены из каталога
 js = re.sub(r'const PRICES = \{[\s\S]*?\n  \};',
