@@ -73,6 +73,7 @@ out_css = (f"html{{scroll-padding-top:86px}}\n"
            + f"{ROOT} .nav{{top:var(--tmenu)}}\n"
            + f"@media (min-width:901px){{{ROOT} .order__stage{{top:calc(90px + var(--tmenu))}}}}\n"
            + f"{ROOT} section[id]{{scroll-margin-top:calc(72px + var(--tmenu))}}\n"
+           + f"{ROOT} .order .step[id]{{scroll-margin-top:calc(96px + var(--tmenu))}}\n"
            # body{overflow-x:hidden} после префиксации превращает контейнер
            # в скролл-контейнер и ломает каждый position:sticky внутри.
            # clip обрезает по горизонтали, но скролл-контейнер не создаёт.
@@ -174,7 +175,7 @@ bridge = """
     if (!card || !price || typeof window.tcart__addProduct !== 'function') {
       // каталог недоступен — не теряем клиента, ведём в форму предзаказа
       setPick(key, Math.max(1, (qty | 0) || 1));
-      orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+      goToOrder();
       return;
     }
     var d = card.dataset;

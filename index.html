@@ -448,6 +448,7 @@ body.loaded .fade-up{opacity:1;transform:none}
 .opt__qty button[disabled]:hover{color:inherit}
 .picked{font:400 14px/1.5 var(--f-body);color:var(--ink-dim);max-width:60ch}
 .picked b{color:var(--ink);font-weight:600}
+.order .step[id]{scroll-margin-top:96px}
 .opts.err{outline:1px solid var(--cinnabar);outline-offset:8px;border-radius:6px}
 
 .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px}
@@ -757,7 +758,7 @@ section[id]{scroll-margin-top:72px}
     <a href="#custom">Под заказ</a>
     <a href="#gift">В подарок</a>
   </nav>
-  <a class="btn btn--sm magnetic" href="#preorder" data-cursor>Предзаказ</a>
+  <a class="btn btn--sm magnetic" href="#orderPick" data-cursor>Предзаказ</a>
 </header>
 
 <main id="top">
@@ -999,7 +1000,7 @@ section[id]{scroll-margin-top:72px}
         <input type="hidden" id="fMug"   name="Кружка"    value="">
         <input type="hidden" id="fQty"   name="Количество" value="">
         <input type="hidden" id="fTotal" name="Сумма"      value="">
-        <div class="step">
+        <div class="step" id="orderPick">
           <div class="step__t"><b>01</b> Выбор и количество</div>
           <div class="opts opts--3" id="optMug"></div>
           <div class="qty-row">
@@ -1042,7 +1043,7 @@ section[id]{scroll-margin-top:72px}
   </div>
 </footer>
 
-<div class="mcta" id="mcta"><a class="btn" href="#preorder">Оформить предзаказ</a></div>
+<div class="mcta" id="mcta"><a class="btn" href="#orderPick">Оформить предзаказ</a></div>
 
 <script>
 (() => {
@@ -1293,17 +1294,27 @@ section[id]{scroll-margin-top:72px}
     const card = e.target.closest('.opt');
     if (card) setPick(card.dataset.mug, state.picks[card.dataset.mug] || 1);
   });
+  /* Прокрутка к предзаказу ведёт на блок выбора кружек, а не на верх
+     раздела: на телефоне сверху стоит большое фото, и человек попадал
+     на него, а не на то, с чем надо работать. */
+  function goToOrder() {
+    const target = $('#orderPick') || orderSec;
+    const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+  }
+
   $$('[data-custom]').forEach(b => b.addEventListener('click', () => {
     const note = $('#fNote');
     note.value = `Кастомная партия: ${b.dataset.custom}. Расскажите про тираж, знак и сроки.`;
-    orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    goToOrder();
     setTimeout(() => note.focus({ preventScroll: true }), reduced ? 0 : 700);
   }));
 
   $$('[data-pick]').forEach(b => b.addEventListener('click', () => {
     const k = b.dataset.pick;
     setPick(k, state.picks[k] || 1);
-    orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    goToOrder();
   }));
   render();
 
