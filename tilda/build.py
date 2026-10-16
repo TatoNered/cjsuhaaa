@@ -170,6 +170,25 @@ bridge = """
     var n = parseInt(String(el.textContent).replace(/[^0-9]/g, ''), 10);
     return (isFinite(n) && n > 0) ? n : null;
   }
+  // собрать товар для корзины прямо из карточки каталога —
+  // работает и для кружек, и для упаковки
+  function tAddCardToCart(card, qty) {
+    if (!card || typeof window.tcart__addProduct !== 'function') return;
+    var q = function (sel) { var e = card.querySelector(sel); return e ? e.textContent.trim() : ''; };
+    var price = parseInt(q('.js-product-price, .js-store-prod-price-val').replace(/[^0-9]/g, ''), 10);
+    if (!isFinite(price) || price <= 0) return;
+    var d = card.dataset;
+    window.tcart__addProduct({
+      name: q('.js-product-name'), price: price, sku: q('.js-product-sku'),
+      img: d.productImg || '', url: d.productUrl || location.href,
+      quantity: Math.max(1, (qty | 0) || 1),
+      uid: d.productUid, lid: d.productLid || d.productUid, gen_uid: d.productGenUid,
+      part_uids: d.productPartUid ? [d.productPartUid] : [],
+      recid: '%s',
+      pack_label: d.productPackLabel, pack_x: d.productPackX,
+      pack_y: d.productPackY, pack_z: d.productPackZ, pack_m: d.productPackM
+    });
+  }
   function tAddToCart(key, qty) {
     var card = tCatCard(key), price = tCatalogPrice(key);
     if (!card || !price || typeof window.tcart__addProduct !== 'function') {
@@ -217,6 +236,10 @@ bridge = """
     Object.keys(state.picks).forEach(function (k) {
       if (state.picks[k] > 0) { tAddToCart(k, state.picks[k]); any = true; }
     });
+    // и выбранная упаковка — отдельными позициями, со своей ценой
+    Object.keys(state.boxes).forEach(function (k) {
+      if (state.boxes[k] > 0) tAddCardToCart(boxCard(k), state.boxes[k]);
+    });
     if (!any) {
       $('#optMug').classList.add('err');
       $('#optMug').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
@@ -228,7 +251,7 @@ bridge = """
       if (tSyncPrices() || ++tTries > 60) clearInterval(tTimer);
     }, 250);
   }
-""" % ('%s' % repr(UIDS).replace("'", '"'), CAT_REC,
+""" % ('%s' % repr(UIDS).replace("'", '"'), CAT_REC, CAT_REC,
        repr(PNAM).replace("'", '"'), repr(SKUS).replace("'", '"'), CAT_REC)
 
 _i = js.rindex('})();')

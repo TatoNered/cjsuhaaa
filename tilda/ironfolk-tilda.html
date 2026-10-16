@@ -410,6 +410,29 @@ html{scroll-padding-top:86px}
 #ironfolk .step__t b{color:var(--ink);font-weight:500}
 #ironfolk .opts{display:grid;gap:10px}
 #ironfolk .opts--3{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+#ironfolk .opts--2{grid-template-columns:repeat(auto-fit,minmax(236px,1fr))}
+#ironfolk .opt.opt--box .opt__check{display:none}
+#ironfolk .opt.opt--box{flex-direction:row;align-items:center;gap:12px;padding:12px 14px}
+#ironfolk .opt.opt--box .opt__thumb{width:52px;flex:0 0 52px;aspect-ratio:1}
+#ironfolk .opt.opt--box .opt__body{display:flex;flex-direction:column;gap:2px;min-width:0}
+#ironfolk .opt.opt--box .opt__name{font:italic 600 17px/1.15 var(--f-serif)}
+#ironfolk .opt.opt--box .opt__price{font-size:15px;margin-top:0}
+#ironfolk .opt.opt--box .opt__qty{margin:0 0 0 auto;align-self:center}
+#ironfolk .boxhint{
+  margin-top:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  font:400 14px/1.5 var(--f-body);color:var(--ink-dim);
+}
+#ironfolk .boxhint b{color:var(--ink);font-weight:600}
+#ironfolk .boxhint button{
+  font:500 11px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);border-bottom:1px solid currentColor;padding-bottom:2px;
+  transition:color .3s,border-color .3s;
+}
+#ironfolk .boxhint button:hover{color:var(--ink)}
+@media (max-width:620px){
+  #ironfolk .opt.opt--box .opt__qty{margin-left:auto}
+  #ironfolk .boxhint{gap:10px}
+}
 #ironfolk .opt{
   --c:var(--ink);
   position:relative;text-align:left;border:1px solid var(--line);border-radius:6px;padding:14px;
@@ -1013,9 +1036,21 @@ html{scroll-padding-top:86px}
         <input type="hidden" id="fMug"   name="Кружка"    value="">
         <input type="hidden" id="fQty"   name="Количество" value="">
         <input type="hidden" id="fTotal" name="Сумма"      value="">
+        <input type="hidden" id="fBox"   name="Упаковка"   value="">
         <div class="step" id="orderPick">
           <div class="step__t"><b>01</b> Выбор и количество</div>
           <div class="opts opts--3" id="optMug"></div>
+        </div>
+
+        <!-- Упаковка. Появляется сама, когда в каталоге есть товары
+             с артикулами IF-BOX-1 и IF-BOX-2. -->
+        <div class="step" id="orderBox" hidden>
+          <div class="step__t"><b>02</b> Упаковка</div>
+          <div class="opts opts--2" id="optBox"></div>
+          <div class="boxhint" id="boxHint" hidden></div>
+        </div>
+
+        <div class="step">
           <div class="qty-row">
             <div class="picked" id="picked">Ничего не выбрано</div>
             <div class="total"><small>Итого</small><b id="total">0 ₽</b></div>
@@ -1082,6 +1117,15 @@ html{scroll-padding-top:86px}
     khokhloma:        { name:'Жар',        craft:'Хохлома',      full:'Хохлома «Жар»',          color:'var(--cinnabar)', img:'https://static.tildacdn.com/stor6466-3462-4338-a330-643239373234/26d06410bd45b6f4773bcfc5a8a27e86.jpg' },
     iron:             { name:'Чугун',      craft:'Брутал',       full:'«Чугун»',                color:'var(--bronze)',   img:'https://static.tildacdn.com/stor3932-6665-4134-b565-383062343763/043e70bc0529953905b2a62c6c9404a3.jpg' },
   };
+  /* Подарочная упаковка. Это отдельные товары в каталоге Тильды —
+     страница находит их по артикулу. Пока таких товаров нет, весь шаг
+     с упаковкой прячется сам и ничего не ломает.
+     Цены, как и у кружек, берутся из каталога, здесь их нет. */
+  const BOXES = {
+    box1: { sku:'IF-BOX-1', name:'На одну кружку', short:'одинарная', holds:1 },
+    box2: { sku:'IF-BOX-2', name:'На две кружки',  short:'двойная',   holds:2 },
+  };
+
   const PRICES = new Proxy({}, { get: (t, k) => tCatalogPrice(String(k)) });
 
   const ROOT = document.getElementById('ironfolk');
@@ -1254,7 +1298,7 @@ html{scroll-padding-top:86px}
      state.last — кружка, которую трогали последней: по ней показывается
      большое фото и берётся цвет акцента. */
   const MAX_PER_MUG = 20;
-  const state = { picks: {}, last: 'gzhel', custom: null };
+  const state = { picks: {}, last: 'gzhel', custom: null, boxes: { box1:0, box2:0 } };
   Object.keys(MUGS).forEach(k => state.picks[k] = 0);
 
   const check = '<span class="opt__check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2"><path d="M2 5.2l2 2 4-4.4"/></svg></span>';
@@ -1277,6 +1321,40 @@ html{scroll-padding-top:86px}
     .reduce((s, [k, n]) => s + (PRICES[k] || 0) * n, 0);
   const pickedList = () => Object.entries(state.picks).filter(([, n]) => n > 0)
     .map(([k, n]) => `${MUGS[k].name} × ${n}`).join(', ');
+
+  /* ---------- упаковка ---------- */
+  // карточка товара-упаковки в блоке каталога, найденная по артикулу
+  function boxCard(k) {
+    const sku = BOXES[k] && BOXES[k].sku;
+    if (!sku) return null;
+    return [...document.querySelectorAll('.js-product')].find(c => {
+      const s = c.querySelector('.js-product-sku');
+      return s && s.textContent.trim() === sku;
+    }) || null;
+  }
+  function boxPrice(k) {
+    const c = boxCard(k); if (!c) return null;
+    const el = c.querySelector('.js-product-price, .js-store-prod-price-val');
+    if (!el) return null;
+    const n = parseInt(String(el.textContent).replace(/[^0-9]/g, ''), 10);
+    return (isFinite(n) && n > 0) ? n : null;
+  }
+  const boxesTotal = () => Object.entries(state.boxes)
+    .reduce((s, [k, n]) => s + (boxPrice(k) || 0) * n, 0);
+  const boxesList = () => Object.entries(state.boxes).filter(([, n]) => n > 0)
+    .map(([k, n]) => `${BOXES[k].name} × ${n}`).join(', ');
+  // сколько упаковок нужно под выбранное число кружек:
+  // максимум двойных, остаток — одинарной
+  const кружек = n => {
+    const d = n % 10, dd = n % 100;
+    if (d === 1 && dd !== 11) return 'кружку';
+    if (d >= 2 && d <= 4 && (dd < 10 || dd >= 20)) return 'кружки';
+    return 'кружек';
+  };
+  const boxSuggest = () => {
+    const n = totalQty();
+    return { box2: Math.floor(n / 2), box1: n % 2 };
+  };
   const orderSec = $('#preorder'), tiltImgs = $$('#tilt img');
   function render() {
     $$('#optMug .opt').forEach(card => {
@@ -1292,18 +1370,90 @@ html{scroll-padding-top:86px}
     tiltImgs.forEach(i => i.classList.toggle('is-active', i.dataset.k === state.last));
     $('#stageName').textContent = MUGS[state.last].full;
     const qty = totalQty(), sum = totalPrice();
+    renderBoxes();
+    const boxSum = boxesTotal(), boxes = boxesList();
+    const itogo = sum + boxSum;
     $('#picked').innerHTML = qty
-      ? `Выбрано: <b>${pickedList()}</b>`
+      ? `Выбрано: <b>${pickedList()}</b>` + (boxes ? `<br>Упаковка: <b>${boxes}</b>` : '')
       : 'Ничего не выбрано — добавьте хотя бы одну кружку';
-    $('#total').textContent = qty ? (sum ? rub(sum) : 'по запросу') : '0 ₽';
+    $('#total').textContent = qty ? (itogo ? rub(itogo) : 'по запросу') : '0 ₽';
     orderSec.style.setProperty('--accent', MUGS[state.last].color);
     // скрытые поля формы держим в актуальном состоянии: Тильда может
     // перехватить отправку раньше нашего обработчика
-    const hMug = $('#fMug'), hQty = $('#fQty'), hTotal = $('#fTotal');
+    const hMug = $('#fMug'), hQty = $('#fQty'), hTotal = $('#fTotal'), hBox = $('#fBox');
     if (hMug)   hMug.value   = pickedList() || (state.custom ? 'Кастомная партия: ' + state.custom : '');
     if (hQty)   hQty.value   = qty ? String(qty) : '';
-    if (hTotal) hTotal.value = sum ? rub(sum) : '';
+    if (hTotal) hTotal.value = itogo ? rub(itogo) : '';
+    if (hBox)   hBox.value   = boxes;
     if (qty) $('#optMug').classList.remove('err');
+    numberSteps();
+  }
+
+  // нумеруем только видимые шаги, чтобы не было дыры 01 — 03
+  function numberSteps() {
+    let i = 0;
+    $$('#orderForm .step').forEach(st => {
+      const b = st.querySelector('.step__t b');
+      if (!b) return;
+      if (st.hidden) { return; }
+      i += 1;
+      b.textContent = String(i).padStart(2, '0');
+    });
+  }
+
+  /* Карточки упаковки строим из каталога: название, цена и фото берём
+     оттуда же, где лежат кружки. Нет товаров — весь шаг скрыт. */
+  let boxesBuilt = false;
+  function renderBoxes() {
+    const step = $('#orderBox'), wrap = $('#optBox');
+    if (!step || !wrap) return;
+    const доступные = Object.keys(BOXES).filter(k => boxPrice(k));
+    if (!доступные.length) { step.hidden = true; boxesBuilt = false; return; }
+    step.hidden = false;
+
+    if (!boxesBuilt) {
+      wrap.innerHTML = доступные.map(k => {
+        const card = boxCard(k);
+        const img = (card && card.dataset.productImg) || '';
+        return `
+        <div class="opt opt--box" data-box="${k}" style="--c:var(--gold)">
+          ${img ? `<span class="opt__thumb"><img src="${img}" alt="" loading="lazy"></span>` : ''}
+          <span class="opt__body">
+            <span class="opt__name">${BOXES[k].name}</span>
+            <span class="opt__price" data-boxprice="${k}"></span>
+          </span>
+          <div class="qty opt__qty">
+            <button type="button" data-boxstep="-1" data-for="${k}" aria-label="Убрать упаковку «${BOXES[k].name}»">−</button>
+            <output data-boxcount="${k}">0</output>
+            <button type="button" data-boxstep="1" data-for="${k}" aria-label="Добавить упаковку «${BOXES[k].name}»">+</button>
+          </div>
+        </div>`;
+      }).join('');
+      boxesBuilt = true;
+    }
+
+    доступные.forEach(k => {
+      const n = state.boxes[k], card = wrap.querySelector(`[data-box="${k}"]`);
+      if (!card) return;
+      card.classList.toggle('is-picked', n > 0);
+      const out = card.querySelector(`[data-boxcount="${k}"]`);
+      if (out) out.textContent = n;
+      const price = card.querySelector(`[data-boxprice="${k}"]`);
+      if (price) price.textContent = rub(boxPrice(k));
+      const minus = card.querySelector('[data-boxstep="-1"]'), plus = card.querySelector('[data-boxstep="1"]');
+      if (minus) minus.disabled = n === 0;
+      if (plus)  plus.disabled  = n >= 20;
+    });
+
+    // подсказка — уже с одной кружки
+    const hint = $('#boxHint'), нужно = boxSuggest(), qty = totalQty();
+    const совпадает = Object.keys(BOXES).every(k => state.boxes[k] === (нужно[k] || 0));
+    if (!qty || совпадает) { hint.hidden = true; return; }
+    const текст = ['box2', 'box1'].filter(k => нужно[k] > 0)
+      .map(k => `${BOXES[k].short} × ${нужно[k]}`).join(', ');
+    hint.hidden = false;
+    hint.innerHTML = `На ${qty} ${кружек(qty)} подойдёт <b>${текст}</b>
+      <button type="button" id="boxApply">Подобрать</button>`;
   }
 
   function setPick(mug, n) {
@@ -1312,6 +1462,22 @@ html{scroll-padding-top:86px}
     state.last = mug;
     render();
   }
+
+  const optBox = $('#optBox');
+  if (optBox) optBox.addEventListener('click', e => {
+    const step = e.target.closest('[data-boxstep]');
+    if (!step) return;
+    const k = step.dataset.for;
+    state.boxes[k] = Math.max(0, Math.min(20, state.boxes[k] + Number(step.dataset.boxstep)));
+    render();
+  });
+  const boxHint = $('#boxHint');
+  if (boxHint) boxHint.addEventListener('click', e => {
+    if (!e.target.closest('#boxApply')) return;
+    const нужно = boxSuggest();
+    Object.keys(BOXES).forEach(k => state.boxes[k] = нужно[k] || 0);
+    render();
+  });
 
   $('#optMug').addEventListener('click', e => {
     const step = e.target.closest('[data-step]');
@@ -1470,6 +1636,25 @@ html{scroll-padding-top:86px}
     var n = parseInt(String(el.textContent).replace(/[^0-9]/g, ''), 10);
     return (isFinite(n) && n > 0) ? n : null;
   }
+  // собрать товар для корзины прямо из карточки каталога —
+  // работает и для кружек, и для упаковки
+  function tAddCardToCart(card, qty) {
+    if (!card || typeof window.tcart__addProduct !== 'function') return;
+    var q = function (sel) { var e = card.querySelector(sel); return e ? e.textContent.trim() : ''; };
+    var price = parseInt(q('.js-product-price, .js-store-prod-price-val').replace(/[^0-9]/g, ''), 10);
+    if (!isFinite(price) || price <= 0) return;
+    var d = card.dataset;
+    window.tcart__addProduct({
+      name: q('.js-product-name'), price: price, sku: q('.js-product-sku'),
+      img: d.productImg || '', url: d.productUrl || location.href,
+      quantity: Math.max(1, (qty | 0) || 1),
+      uid: d.productUid, lid: d.productLid || d.productUid, gen_uid: d.productGenUid,
+      part_uids: d.productPartUid ? [d.productPartUid] : [],
+      recid: '4831817501',
+      pack_label: d.productPackLabel, pack_x: d.productPackX,
+      pack_y: d.productPackY, pack_z: d.productPackZ, pack_m: d.productPackM
+    });
+  }
   function tAddToCart(key, qty) {
     var card = tCatCard(key), price = tCatalogPrice(key);
     if (!card || !price || typeof window.tcart__addProduct !== 'function') {
@@ -1516,6 +1701,10 @@ html{scroll-padding-top:86px}
     var any = false;
     Object.keys(state.picks).forEach(function (k) {
       if (state.picks[k] > 0) { tAddToCart(k, state.picks[k]); any = true; }
+    });
+    // и выбранная упаковка — отдельными позициями, со своей ценой
+    Object.keys(state.boxes).forEach(function (k) {
+      if (state.boxes[k] > 0) tAddCardToCart(boxCard(k), state.boxes[k]);
     });
     if (!any) {
       $('#optMug').classList.add('err');
