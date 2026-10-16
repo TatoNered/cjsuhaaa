@@ -1022,7 +1022,7 @@ html{scroll-padding-top:86px}
           </div>
         </div>
 
-        <div class="step">
+        <div class="step" id="orderContacts">
           <div class="step__t"><b>02</b> Контакты</div>
           <div class="fields">
             <div class="field"><input id="fName" name="name" placeholder=" " autocomplete="name" required><label for="fName">Имя</label></div>
@@ -1254,7 +1254,7 @@ html{scroll-padding-top:86px}
      state.last — кружка, которую трогали последней: по ней показывается
      большое фото и берётся цвет акцента. */
   const MAX_PER_MUG = 20;
-  const state = { picks: {}, last: 'gzhel' };
+  const state = { picks: {}, last: 'gzhel', custom: null };
   Object.keys(MUGS).forEach(k => state.picks[k] = 0);
 
   const check = '<span class="opt__check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2"><path d="M2 5.2l2 2 4-4.4"/></svg></span>';
@@ -1300,8 +1300,8 @@ html{scroll-padding-top:86px}
     // скрытые поля формы держим в актуальном состоянии: Тильда может
     // перехватить отправку раньше нашего обработчика
     const hMug = $('#fMug'), hQty = $('#fQty'), hTotal = $('#fTotal');
-    if (hMug)   hMug.value   = pickedList();
-    if (hQty)   hQty.value   = String(qty);
+    if (hMug)   hMug.value   = pickedList() || (state.custom ? 'Кастомная партия: ' + state.custom : '');
+    if (hQty)   hQty.value   = qty ? String(qty) : '';
     if (hTotal) hTotal.value = sum ? rub(sum) : '';
     if (qty) $('#optMug').classList.remove('err');
   }
@@ -1324,8 +1324,8 @@ html{scroll-padding-top:86px}
   /* Прокрутка к предзаказу ведёт на блок выбора кружек, а не на верх
      раздела: на телефоне сверху стоит большое фото, и человек попадал
      на него, а не на то, с чем надо работать. */
-  function goToOrder() {
-    const target = $('#orderPick') || orderSec;
+  function goToOrder(el) {
+    const target = el || $('#orderPick') || orderSec;
     const jump = () => {
       const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
       const top = target.getBoundingClientRect().top + window.scrollY - offset;
@@ -1340,10 +1340,15 @@ html{scroll-padding-top:86px}
     }, ms));
   }
 
+  /* «Обсудить тираж» — разговор про кастомную партию, а не про готовые
+     кружки. Ведём сразу на контакты, выбор из трёх кружек пропускаем
+     и не требуем его при отправке. */
   $$('[data-custom]').forEach(b => b.addEventListener('click', () => {
     const note = $('#fNote');
     note.value = `Кастомная партия: ${b.dataset.custom}. Расскажите про тираж, знак и сроки.`;
-    goToOrder();
+    state.custom = b.dataset.custom;
+    render();
+    goToOrder($('#orderContacts'));
     setTimeout(() => note.focus({ preventScroll: true }), reduced ? 0 : 700);
   }));
 
@@ -1383,7 +1388,7 @@ html{scroll-padding-top:86px}
   const fName = $('#fName'), submitBtn = $('#orderForm button[type="submit"]');
 
   function orderValid() {
-    const pickedOk = totalQty() > 0;
+    const pickedOk = totalQty() > 0 || !!state.custom;
     const nameOk   = fName.value.trim().length > 1;
     const phoneOk  = phone.value.replace(/\D/g, '').length === 11;
     $('#optMug').classList.toggle('err', !pickedOk);
