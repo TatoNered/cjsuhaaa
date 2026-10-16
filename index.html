@@ -426,7 +426,8 @@ body.loaded .fade-up{opacity:1;transform:none}
   display:flex;flex-direction:column;gap:10px;
 }
 .opt:hover{border-color:rgba(239,230,212,.4)}
-.opt[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb, var(--c) 12%, transparent)}
+.opt.is-picked{border-color:var(--c);background:color-mix(in srgb, var(--c) 12%, transparent)}
+.opt.is-last{box-shadow:0 0 0 1px var(--c)}
 .opt__thumb{aspect-ratio:1;border-radius:4px;overflow:hidden}
 .opt__thumb img{width:100%;height:100%;object-fit:cover;object-position:50% 60%;transform:scale(1.35);transition:transform .6s var(--ease-out)}
 .opt:hover .opt__thumb img{transform:scale(1.5)}
@@ -437,9 +438,17 @@ body.loaded .fade-up{opacity:1;transform:none}
   position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;
   border:1px solid var(--line);display:grid;place-items:center;transition:all .3s;background:rgba(12,10,8,.6)
 }
-.opt[aria-pressed="true"] .opt__check{background:var(--c);border-color:var(--c)}
+.opt.is-picked .opt__check{background:var(--c);border-color:var(--c)}
 .opt__check svg{width:10px;height:10px;stroke:#0c0a08;opacity:0;transition:opacity .3s}
-.opt[aria-pressed="true"] .opt__check svg{opacity:1}
+.opt.is-picked .opt__check svg{opacity:1}
+.opt__qty{margin-top:auto;align-self:stretch;justify-content:space-between}
+.opt__qty button{width:34px;height:34px;font-size:17px}
+.opt__qty output{min-width:28px;font-size:17px}
+.opt__qty button[disabled]{opacity:.3;cursor:default}
+.opt__qty button[disabled]:hover{color:inherit}
+.picked{font:400 14px/1.5 var(--f-body);color:var(--ink-dim);max-width:60ch}
+.picked b{color:var(--ink);font-weight:600}
+.opts.err{outline:1px solid var(--cinnabar);outline-offset:8px;border-radius:6px}
 
 .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px}
 .qty button{width:48px;height:48px;font-size:20px;display:grid;place-items:center;transition:color .3s}
@@ -991,24 +1000,16 @@ section[id]{scroll-margin-top:72px}
         <input type="hidden" id="fQty"   name="Количество" value="">
         <input type="hidden" id="fTotal" name="Сумма"      value="">
         <div class="step">
-          <div class="step__t"><b>01</b> Характер</div>
+          <div class="step__t"><b>01</b> Выбор и количество</div>
           <div class="opts opts--3" id="optMug"></div>
-        </div>
-
-        <div class="step">
-          <div class="step__t"><b>02</b> Количество</div>
           <div class="qty-row">
-            <div class="qty">
-              <button type="button" id="qMinus" aria-label="Меньше">−</button>
-              <output id="qVal">1</output>
-              <button type="button" id="qPlus" aria-label="Больше">+</button>
-            </div>
+            <div class="picked" id="picked">Ничего не выбрано</div>
             <div class="total"><small>Итого</small><b id="total">0 ₽</b></div>
           </div>
         </div>
 
         <div class="step">
-          <div class="step__t"><b>03</b> Контакты</div>
+          <div class="step__t"><b>02</b> Контакты</div>
           <div class="fields">
             <div class="field"><input id="fName" name="name" placeholder=" " autocomplete="name" required><label for="fName">Имя</label></div>
             <div class="field"><input id="fPhone" name="phone" type="tel" placeholder=" " autocomplete="tel" inputmode="tel" required><label for="fPhone">Телефон</label></div>
@@ -1220,35 +1221,78 @@ section[id]{scroll-margin-top:72px}
   tickCd(); setInterval(tickCd, 15000);
 
   /* ---------- order configurator ---------- */
-  const state = { mug:'gzhel', qty:1 };
+  /* Количество задаётся по каждой кружке отдельно: можно взять
+     одну гжель, три хохломы и пять чугунов одним предзаказом.
+     state.last — кружка, которую трогали последней: по ней показывается
+     большое фото и берётся цвет акцента. */
+  const MAX_PER_MUG = 20;
+  const state = { picks: {}, last: 'gzhel' };
+  Object.keys(MUGS).forEach(k => state.picks[k] = 0);
+
   const check = '<span class="opt__check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2"><path d="M2 5.2l2 2 4-4.4"/></svg></span>';
   $('#optMug').innerHTML = Object.entries(MUGS).map(([k, m]) => `
-    <button type="button" class="opt" data-mug="${k}" style="--c:${m.color}" aria-pressed="false">
+    <div class="opt" data-mug="${k}" style="--c:${m.color}">
       ${check}
       <span class="opt__thumb"><img src="${m.img}" alt="" loading="lazy"></span>
       <span class="opt__name">${m.name}</span>
       <span class="opt__sub">${m.craft}</span>
       <span class="opt__price">${PRICES[k] ? rub(PRICES[k]) : 'по запросу'}</span>
-    </button>`).join('');
+      <div class="qty opt__qty">
+        <button type="button" data-step="-1" data-for="${k}" aria-label="Убрать «${m.name}»">−</button>
+        <output data-count="${k}">0</output>
+        <button type="button" data-step="1" data-for="${k}" aria-label="Добавить «${m.name}»">+</button>
+      </div>
+    </div>`).join('');
+
+  const totalQty   = () => Object.values(state.picks).reduce((s, n) => s + n, 0);
+  const totalPrice = () => Object.entries(state.picks)
+    .reduce((s, [k, n]) => s + (PRICES[k] || 0) * n, 0);
+  const pickedList = () => Object.entries(state.picks).filter(([, n]) => n > 0)
+    .map(([k, n]) => `${MUGS[k].name} × ${n}`).join(', ');
   const orderSec = $('#preorder'), tiltImgs = $$('#tilt img');
   function render() {
-    $$('[data-mug]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mug === state.mug));
-    tiltImgs.forEach(i => i.classList.toggle('is-active', i.dataset.k === state.mug));
-    $('#stageName').textContent = MUGS[state.mug].full;
-    $('#qVal').textContent = state.qty;
-    const price = PRICES[state.mug];
-    $('#total').textContent = price ? rub(price * state.qty) : 'по запросу';
-    orderSec.style.setProperty('--accent', MUGS[state.mug].color);
+    $$('#optMug .opt').forEach(card => {
+      const k = card.dataset.mug, n = state.picks[k];
+      card.classList.toggle('is-picked', n > 0);
+      card.classList.toggle('is-last', k === state.last);
+      const out = card.querySelector(`[data-count="${k}"]`);
+      if (out) out.textContent = n;
+      const minus = card.querySelector('[data-step="-1"]'), plus = card.querySelector('[data-step="1"]');
+      if (minus) minus.disabled = n === 0;
+      if (plus)  plus.disabled  = n >= MAX_PER_MUG;
+    });
+    tiltImgs.forEach(i => i.classList.toggle('is-active', i.dataset.k === state.last));
+    $('#stageName').textContent = MUGS[state.last].full;
+    const qty = totalQty(), sum = totalPrice();
+    $('#picked').innerHTML = qty
+      ? `Выбрано: <b>${pickedList()}</b>`
+      : 'Ничего не выбрано — добавьте хотя бы одну кружку';
+    $('#total').textContent = qty ? (sum ? rub(sum) : 'по запросу') : '0 ₽';
+    orderSec.style.setProperty('--accent', MUGS[state.last].color);
     // скрытые поля формы держим в актуальном состоянии: Тильда может
     // перехватить отправку раньше нашего обработчика
     const hMug = $('#fMug'), hQty = $('#fQty'), hTotal = $('#fTotal');
-    if (hMug)   hMug.value   = MUGS[state.mug].full;
-    if (hQty)   hQty.value   = String(state.qty);
-    if (hTotal) hTotal.value = price ? rub(price * state.qty) : 'по запросу';
+    if (hMug)   hMug.value   = pickedList();
+    if (hQty)   hQty.value   = String(qty);
+    if (hTotal) hTotal.value = sum ? rub(sum) : '';
+    if (qty) $('#optMug').classList.remove('err');
   }
-  $('#optMug').addEventListener('click', e => { const b = e.target.closest('[data-mug]'); if (b) { state.mug = b.dataset.mug; render(); } });
-  $('#qMinus').onclick = () => { state.qty = Math.max(1, state.qty - 1); render(); };
-  $('#qPlus').onclick  = () => { state.qty = Math.min(20, state.qty + 1); render(); };
+
+  function setPick(mug, n) {
+    if (!(mug in state.picks)) return;
+    state.picks[mug] = Math.max(0, Math.min(MAX_PER_MUG, n));
+    state.last = mug;
+    render();
+  }
+
+  $('#optMug').addEventListener('click', e => {
+    const step = e.target.closest('[data-step]');
+    if (step) { setPick(step.dataset.for, state.picks[step.dataset.for] + Number(step.dataset.step)); return; }
+    // клик по самой карточке: первая — добавляет штуку, дальше просто
+    // переключает большое фото
+    const card = e.target.closest('.opt');
+    if (card) setPick(card.dataset.mug, state.picks[card.dataset.mug] || 1);
+  });
   $$('[data-custom]').forEach(b => b.addEventListener('click', () => {
     const note = $('#fNote');
     note.value = `Кастомная партия: ${b.dataset.custom}. Расскажите про тираж, знак и сроки.`;
@@ -1257,7 +1301,8 @@ section[id]{scroll-margin-top:72px}
   }));
 
   $$('[data-pick]').forEach(b => b.addEventListener('click', () => {
-    state.mug = b.dataset.pick; render();
+    const k = b.dataset.pick;
+    setPick(k, state.picks[k] || 1);
     orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
   }));
   render();
@@ -1291,11 +1336,13 @@ section[id]{scroll-margin-top:72px}
   const fName = $('#fName'), submitBtn = $('#orderForm button[type="submit"]');
 
   function orderValid() {
-    const nameOk  = fName.value.trim().length > 1;
-    const phoneOk = phone.value.replace(/\D/g, '').length === 11;
+    const pickedOk = totalQty() > 0;
+    const nameOk   = fName.value.trim().length > 1;
+    const phoneOk  = phone.value.replace(/\D/g, '').length === 11;
+    $('#optMug').classList.toggle('err', !pickedOk);
     fName.parentElement.classList.toggle('err', !nameOk);
     phone.parentElement.classList.toggle('err', !phoneOk);
-    return nameOk && phoneOk;
+    return pickedOk && nameOk && phoneOk;
   }
   // убираем подсветку, как только человек начал исправлять
   [fName, phone].forEach(el => el.addEventListener('input', () => {
@@ -1311,6 +1358,10 @@ section[id]{scroll-margin-top:72px}
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
+    if ($('#optMug').classList.contains('err')) {
+      $('#optMug').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      return;
+    }
     const bad = fName.parentElement.classList.contains('err') ? fName : phone;
     bad.focus({ preventScroll: true });
   }, true);

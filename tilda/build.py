@@ -172,7 +172,8 @@ bridge = """
   function tAddToCart(key, qty) {
     var card = tCatCard(key), price = tCatalogPrice(key);
     if (!card || !price || typeof window.tcart__addProduct !== 'function') {
-      state.mug = key; render();
+      // каталог недоступен — не теряем клиента, ведём в форму предзаказа
+      setPick(key, Math.max(1, (qty | 0) || 1));
       orderSec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
       return;
     }
@@ -208,7 +209,17 @@ bridge = """
     b.addEventListener('click', function () { tAddToCart(b.dataset.cart, 1); });
   });
   var tBuyNow = $('#buyNow');
-  if (tBuyNow) tBuyNow.addEventListener('click', function () { tAddToCart(state.mug, state.qty); });
+  if (tBuyNow) tBuyNow.addEventListener('click', function () {
+    // в корзину уходят все выбранные кружки, каждая со своим количеством
+    var any = false;
+    Object.keys(state.picks).forEach(function (k) {
+      if (state.picks[k] > 0) { tAddToCart(k, state.picks[k]); any = true; }
+    });
+    if (!any) {
+      $('#optMug').classList.add('err');
+      $('#optMug').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+    }
+  });
   if (!tSyncPrices()) {
     var tTries = 0;
     var tTimer = setInterval(function () {
