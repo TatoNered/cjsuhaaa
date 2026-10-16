@@ -527,10 +527,15 @@ body.loaded .fade-up{opacity:1;transform:none}
 }
 
 /* ---------- footer ---------- */
-.footer{border-top:1px solid var(--line);padding:60px var(--gutter) 110px;position:relative;overflow:hidden}
+.footer{border-top:1px solid var(--line);padding:60px var(--gutter) 110px;position:relative;overflow:hidden;container-type:inline-size}
 .footer__big{
-  font:400 clamp(60px,15vw,260px)/.8 var(--f-display);text-transform:uppercase;letter-spacing:-.02em;
+  font:400 260px/.8 var(--f-display);text-transform:uppercase;letter-spacing:-.02em;
+  /* надпись всегда вписывается в ширину подвала: 1 символ ≈ 0.7 кегля, «IRON FOLK» ≈ 7 кеглей */
+  font-size:min(260px, calc((100vw - 2 * var(--gutter)) / 7.1));
   color:transparent;-webkit-text-stroke:1px rgba(239,230,212,.18);white-space:nowrap;
+}
+@supports (font-size:1cqw){
+  .footer__big{font-size:min(260px, 14cqw)}
 }
 .footer__row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:40px;font:500 11px/1.6 var(--f-mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
 .footer__legal{max-width:640px;text-transform:none;letter-spacing:.02em;font-family:var(--f-body);font-size:12px}
