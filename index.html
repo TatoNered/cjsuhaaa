@@ -1299,9 +1299,18 @@ section[id]{scroll-margin-top:72px}
      на него, а не на то, с чем надо работать. */
   function goToOrder() {
     const target = $('#orderPick') || orderSec;
-    const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
-    const top = target.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+    const jump = () => {
+      const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+      return offset;
+    };
+    const offset = jump();
+    // пока страница догружается, картинки выше меняют высоту и цель уезжает —
+    // проверяем и дотягиваем, когда прокрутка закончилась
+    [700, 1500].forEach(ms => setTimeout(() => {
+      if (Math.abs(target.getBoundingClientRect().top - offset) > 4) jump();
+    }, ms));
   }
 
   $$('[data-custom]').forEach(b => b.addEventListener('click', () => {
