@@ -196,7 +196,7 @@ bridge = """
       var p = tCatalogPrice(el.dataset.priceFor);
       el.textContent = p ? rub(p) : 'цена по запросу';
       var b = el.parentElement.querySelector('[data-cart]');
-      if (b) b.hidden = !p;
+      if (b) b.hidden = !p || !SALE_ON;
       if (p) ready = true;
     });
     $$('.opt[data-mug]').forEach(function (b) {
@@ -210,6 +210,7 @@ bridge = """
     b.addEventListener('click', function () { tAddToCart(b.dataset.cart, 1); });
   });
   var tBuyNow = $('#buyNow');
+  if (tBuyNow && !SALE_ON) tBuyNow.hidden = true;
   if (tBuyNow) tBuyNow.addEventListener('click', function () {
     // в корзину уходят все выбранные кружки, каждая со своим количеством
     var any = false;

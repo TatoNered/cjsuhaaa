@@ -132,6 +132,7 @@ html{scroll-padding-top:86px}
 #ironfolk .btn--ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
 #ironfolk .btn--ghost:hover{border-color:var(--ink);box-shadow:none}
 #ironfolk .btn--sm{padding:12px 18px;font-size:11px}
+#ironfolk .btn[hidden]{display:none!important}
 #ironfolk .btn svg{width:14px;height:14px;transition:transform .4s var(--ease-out)}
 #ironfolk .btn:hover svg{transform:translateX(4px)}
 
@@ -1062,6 +1063,18 @@ html{scroll-padding-top:86px}
 (() => {
 
   /* ==================================================================
+     ПРОДАЖА ЧЕРЕЗ КОРЗИНУ
+
+     false — кружек ещё нет: кнопки «В корзину» и «Купить сейчас»
+             спрятаны, на странице работает только предзаказ.
+     true  — кружки приехали: кнопки появляются, продажа включена.
+
+     Когда товар будет на складе: поменять на true, сохранить блок
+     и нажать «Опубликовать». Больше ничего делать не нужно.
+     ================================================================== */
+  const SALE_ON = false;
+
+  /* ==================================================================
      КОНФИГ. Цены — ЗАГЛУШКИ, заменить на реальные от клиента.
      ================================================================== */
   const MUGS = {
@@ -1478,7 +1491,7 @@ html{scroll-padding-top:86px}
       var p = tCatalogPrice(el.dataset.priceFor);
       el.textContent = p ? rub(p) : 'цена по запросу';
       var b = el.parentElement.querySelector('[data-cart]');
-      if (b) b.hidden = !p;
+      if (b) b.hidden = !p || !SALE_ON;
       if (p) ready = true;
     });
     $$('.opt[data-mug]').forEach(function (b) {
@@ -1492,6 +1505,7 @@ html{scroll-padding-top:86px}
     b.addEventListener('click', function () { tAddToCart(b.dataset.cart, 1); });
   });
   var tBuyNow = $('#buyNow');
+  if (tBuyNow && !SALE_ON) tBuyNow.hidden = true;
   if (tBuyNow) tBuyNow.addEventListener('click', function () {
     // в корзину уходят все выбранные кружки, каждая со своим количеством
     var any = false;
