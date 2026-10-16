@@ -1010,8 +1010,8 @@ section[id]{scroll-margin-top:72px}
         <div class="step">
           <div class="step__t"><b>03</b> Контакты</div>
           <div class="fields">
-            <div class="field"><input id="fName" name="name" placeholder=" " autocomplete="name"><label for="fName">Имя</label></div>
-            <div class="field"><input id="fPhone" name="phone" type="tel" placeholder=" " autocomplete="tel" inputmode="tel"><label for="fPhone">Телефон</label></div>
+            <div class="field"><input id="fName" name="name" placeholder=" " autocomplete="name" required><label for="fName">Имя</label></div>
+            <div class="field"><input id="fPhone" name="phone" type="tel" placeholder=" " autocomplete="tel" inputmode="tel" required><label for="fPhone">Телефон</label></div>
             <div class="field field--full"><textarea id="fNote" name="Комментарий" placeholder=" "></textarea><label for="fNote">Комментарий: в подарок, гравировка, сроки…</label></div>
           </div>
         </div>
@@ -1288,12 +1288,36 @@ section[id]{scroll-margin-top:72px}
   // показываем экран «отправлено» — Тильда зовёт это по data-success-callback
   window.ironfolkOrderSent = () => orderSec.classList.add('sent');
 
-  $('#orderForm').addEventListener('submit', e => {
-    const nameOk = $('#fName').value.trim().length > 1;
+  const fName = $('#fName'), submitBtn = $('#orderForm button[type="submit"]');
+
+  function orderValid() {
+    const nameOk  = fName.value.trim().length > 1;
     const phoneOk = phone.value.replace(/\D/g, '').length === 11;
-    $('#fName').parentElement.classList.toggle('err', !nameOk);
+    fName.parentElement.classList.toggle('err', !nameOk);
     phone.parentElement.classList.toggle('err', !phoneOk);
-    if (!nameOk || !phoneOk) { e.preventDefault(); e.stopPropagation(); return; }
+    return nameOk && phoneOk;
+  }
+  // убираем подсветку, как только человек начал исправлять
+  [fName, phone].forEach(el => el.addEventListener('input', () => {
+    el.parentElement.classList.remove('err');
+  }));
+
+  /* Тильда отправляет форму по КЛИКУ на кнопку, минуя событие submit, —
+     поэтому проверять надо на клике и в фазе перехвата, то есть раньше,
+     чем до него доберётся её обработчик. */
+  if (submitBtn) document.addEventListener('click', e => {
+    if (e.target !== submitBtn && !submitBtn.contains(e.target)) return;
+    if (orderValid()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    const bad = fName.parentElement.classList.contains('err') ? fName : phone;
+    bad.focus({ preventScroll: true });
+  }, true);
+
+  // запасной путь, когда страница открыта вне Тильды и отправлять некуда
+  $('#orderForm').addEventListener('submit', e => {
+    if (!orderValid()) { e.preventDefault(); e.stopPropagation(); return; }
     if (!tildaForms()) { e.preventDefault(); window.ironfolkOrderSent(); }
   }, true);
 
